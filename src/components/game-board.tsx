@@ -8,13 +8,24 @@ import { ImageCard } from "./image-card";
 import { EmptyState } from "./empty-state";
 import { ManagePanel } from "./manage-panel";
 
-// Lazy-load celebration — only loaded when game completes (bundle-dynamic-imports)
 const Celebration = dynamic(
   () => import("./celebration").then((m) => ({ default: m.Celebration })),
   { ssr: false },
 );
 
 const MIN_WORDS = 4;
+
+// Decorative dots between word and image rows
+function CardConnector() {
+  return (
+    <div className="card-connector">
+      <span className="connector-dot" />
+      <span className="connector-dot" />
+      <span className="connector-dot" />
+      <span className="connector-dot" />
+    </div>
+  );
+}
 
 interface GameBoardProps {
   initialWords: Word[];
@@ -39,18 +50,14 @@ export function GameBoard({ initialWords }: GameBoardProps) {
     newGame();
   }, [newGame]);
 
-  const handleWordsChange = useCallback(
-    (nextWords: Word[]) => {
-      setWords(nextWords);
-    },
-    [],
-  );
+  const handleWordsChange = useCallback((nextWords: Word[]) => {
+    setWords(nextWords);
+  }, []);
 
   const toggleManage = useCallback(() => {
     setShowManage((prev) => !prev);
   }, []);
 
-  // Empty state when word bank too small
   if (words.length < MIN_WORDS) {
     return (
       <div className="container">
@@ -95,6 +102,9 @@ export function GameBoard({ initialWords }: GameBoardProps) {
             );
           })}
         </div>
+
+        {/* Decorative connector */}
+        <CardConnector />
 
         {/* Image row */}
         <div className="card-row">

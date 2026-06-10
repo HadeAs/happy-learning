@@ -23,6 +23,7 @@ export const ImageCard = memo(function ImageCard({
   const cls = [
     "card",
     "image-card",
+    "entering",
     isMatched && "matched",
     isWrong && "wrong",
   ]
@@ -30,7 +31,11 @@ export const ImageCard = memo(function ImageCard({
     .join(" ");
 
   return (
-    <div className={cls} onClick={() => onClick(slot)}>
+    <div
+      className={cls}
+      style={{ animationDelay: `${50 + slot * 90}ms` }}
+      onClick={() => !isMatched && onClick(slot)}
+    >
       {imgError ? (
         <span className="placeholder">{word}</span>
       ) : (
