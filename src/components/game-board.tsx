@@ -15,7 +15,6 @@ const Celebration = dynamic(
 
 const MIN_WORDS = 4;
 
-// Decorative dots between word and image rows
 function CardConnector() {
   return (
     <div className="card-connector">
@@ -54,22 +53,33 @@ export function GameBoard({ initialWords }: GameBoardProps) {
     setWords(nextWords);
   }, []);
 
-  const toggleManage = useCallback(() => {
-    setShowManage((prev) => !prev);
-  }, []);
+  const openManage = useCallback(() => setShowManage(true), []);
+  const closeManage = useCallback(() => setShowManage(false), []);
+
+  // 管理按钮 — 固定在右上角
+  const manageBtn = (
+    <button className="btn-manage" onClick={openManage}>
+      📝 管理单词库
+    </button>
+  );
 
   if (words.length < MIN_WORDS) {
     return (
       <div className="container">
-        <div className="header">
-          <h1>🎈 幼儿英语单词匹配游戏</h1>
-          <button className="btn-manage" onClick={toggleManage}>
-            📝 管理单词库
-          </button>
+        {manageBtn}
+        <div className="game-area" style={{ justifyContent: "center" }}>
+          <EmptyState onGoManage={openManage} />
         </div>
-        <EmptyState onGoManage={toggleManage} />
         {showManage ? (
-          <ManagePanel words={words} onWordsChange={handleWordsChange} />
+          <div className="manage-modal-overlay" onClick={closeManage}>
+            <div onClick={(e) => e.stopPropagation()}>
+              <ManagePanel
+                words={words}
+                onWordsChange={handleWordsChange}
+                onClose={closeManage}
+              />
+            </div>
+          </div>
         ) : null}
       </div>
     );
@@ -77,11 +87,10 @@ export function GameBoard({ initialWords }: GameBoardProps) {
 
   return (
     <div className="container">
+      {manageBtn}
+
       <div className="header">
         <h1>🎈 幼儿英语单词匹配游戏</h1>
-        <button className="btn-manage" onClick={toggleManage}>
-          📝 管理单词库
-        </button>
       </div>
 
       <div className="game-area">
@@ -103,7 +112,6 @@ export function GameBoard({ initialWords }: GameBoardProps) {
           })}
         </div>
 
-        {/* Decorative connector */}
         <CardConnector />
 
         {/* Image row */}
@@ -135,8 +143,17 @@ export function GameBoard({ initialWords }: GameBoardProps) {
         </div>
       </div>
 
+      {/* 管理弹窗 */}
       {showManage ? (
-        <ManagePanel words={words} onWordsChange={handleWordsChange} />
+        <div className="manage-modal-overlay" onClick={closeManage}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <ManagePanel
+              words={words}
+              onWordsChange={handleWordsChange}
+              onClose={closeManage}
+            />
+          </div>
+        </div>
       ) : null}
 
       {showCelebration ? (

@@ -1,20 +1,15 @@
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import type { Word } from "@/types";
 
 interface ManagePanelProps {
   words: Word[];
   onWordsChange: (words: Word[]) => void;
+  onClose: () => void;
 }
 
 const STORAGE_KEY = "wordMatchGame_words";
 const MIN_WORDS = 4;
-
-function escapeHtml(s: string): string {
-  const div = document.createElement("div");
-  div.textContent = s;
-  return div.innerHTML;
-}
 
 function readFileAsDataURL(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -28,7 +23,7 @@ function readFileAsDataURL(file: File): Promise<string> {
   });
 }
 
-export function ManagePanel({ words, onWordsChange }: ManagePanelProps) {
+export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps) {
   const [newWord, setNewWord] = useState("");
   const [selectedImage, setSelectedImage] = useState("");
   const [adding, setAdding] = useState(false);
@@ -49,7 +44,6 @@ export function ManagePanel({ words, onWordsChange }: ManagePanelProps) {
     try {
       let image: string | undefined;
 
-      // Upload new image takes priority
       if (fileRef.current?.files?.length) {
         try {
           image = await readFileAsDataURL(fileRef.current.files[0]);
@@ -72,7 +66,6 @@ export function ManagePanel({ words, onWordsChange }: ManagePanelProps) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       onWordsChange(next);
 
-      // Clear form
       setNewWord("");
       setSelectedImage("");
       if (fileRef.current) fileRef.current.value = "";
@@ -118,6 +111,7 @@ export function ManagePanel({ words, onWordsChange }: ManagePanelProps) {
 
   return (
     <div className="manage-panel">
+      <button className="btn-modal-close" onClick={onClose} aria-label="关闭">✕</button>
       <h3>📝 单词库管理</h3>
 
       <div className="add-form">
