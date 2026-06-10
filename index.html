@@ -461,6 +461,40 @@ const MIN_WORDS = 4;
 
 let wordBank = [];
 
+// 内嵌种子单词库（避免 file:// 下 fetch 被拦截）
+const SEED_WORDS = [
+  { "word": "Alligator", "image": "img/alligator.png" },
+  { "word": "Animals", "image": "img/animals.png" },
+  { "word": "Ant", "image": "img/ant.png" },
+  { "word": "Apple", "image": "img/apple.png" },
+  { "word": "Ax", "image": "img/ax.png" },
+  { "word": "Banana", "image": "img/banana.png" },
+  { "word": "Bear", "image": "img/bear.png" },
+  { "word": "Bed", "image": "img/bed.png" },
+  { "word": "Bird", "image": "img/bird.png" },
+  { "word": "Boy", "image": "img/boy.png" },
+  { "word": "Bunny", "image": "img/bunny.png" },
+  { "word": "Car", "image": "img/car.png" },
+  { "word": "Cat", "image": "img/cat.png" },
+  { "word": "Chicken", "image": "img/chicken.png" },
+  { "word": "Computer", "image": "img/computer.png" },
+  { "word": "Cow", "image": "img/cow.png" },
+  { "word": "Cup", "image": "img/cup.png" },
+  { "word": "Deer", "image": "img/deer.png" },
+  { "word": "Dog", "image": "img/dog.png" },
+  { "word": "Duck", "image": "img/duck.png" },
+  { "word": "Fox", "image": "img/fox.png" },
+  { "word": "Girl", "image": "img/girl.png" },
+  { "word": "Goat", "image": "img/goat.png" },
+  { "word": "Goldfish", "image": "img/goldfish.png" },
+  { "word": "Hamster", "image": "img/hamster.png" },
+  { "word": "Horse", "image": "img/horse.png" },
+  { "word": "Mouse", "image": "img/mouse.png" },
+  { "word": "Pig", "image": "img/pig.png" },
+  { "word": "Sheep", "image": "img/sheep.png" },
+  { "word": "Turtle", "image": "img/turtle.png" }
+];
+
 function loadWordBank() {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) {
@@ -469,18 +503,10 @@ function loadWordBank() {
       if (wordBank.length >= MIN_WORDS) return initApp();
     } catch (e) { /* ignore corrupt data */ }
   }
-  // 从 words.json 加载种子数据
-  fetch('words.json')
-    .then(r => r.json())
-    .then(data => {
-      wordBank = data;
-      saveWordBank();
-      initApp();
-    })
-    .catch(() => {
-      // 回退到 localStorage 数据（哪怕不足）
-      initApp();
-    });
+  // 使用内嵌种子数据（避免 file:// 协议下 fetch 被拦截）
+  wordBank = [...SEED_WORDS];
+  saveWordBank();
+  initApp();
 }
 
 function saveWordBank() {
