@@ -1,5 +1,14 @@
 .superpowers/
 .DS_Store
 
+# IDE
 .codegraph/
 .reasonix/
+
+# Next.js
+node_modules/
+.next/
+out/
+
+# env
+.env*.local
