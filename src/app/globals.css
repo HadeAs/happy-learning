@@ -37,10 +37,10 @@
   --cloud: #ECEFF1;
 
   /* 卡片尺寸 */
-  --word-w: 150px;
-  --word-h: 90px;
-  --image-w: 150px;
-  --image-h: 150px;
+  --word-w: 180px;
+  --word-h: 110px;
+  --image-w: 180px;
+  --image-h: 180px;
   --card-radius: 22px;
   --card-shadow: 0 6px 20px rgba(44,62,80,0.08), 0 2px 6px rgba(44,62,80,0.04);
   --card-shadow-hover: 0 12px 32px rgba(44,62,80,0.12), 0 4px 12px rgba(44,62,80,0.06);
@@ -234,7 +234,7 @@ body::before {
   align-items: center;
   justify-content: center;
   font-family: 'Fredoka', sans-serif;
-  font-size: 28px;
+  font-size: 33px;
   font-weight: 600;
   color: var(--navy);
   letter-spacing: 0.5px;
@@ -374,7 +374,7 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36px;
+  font-size: 38px;
   color: var(--mint);
   font-weight: 700;
   background: rgba(255,255,255,0.50);
@@ -783,12 +783,12 @@ body::before {
   body { padding: 14px 12px 40px; }
   .header h1 { font-size: 24px; }
   :root {
-    --word-w: 130px;
-    --word-h: 78px;
-    --image-w: 130px;
-    --image-h: 130px;
+    --word-w: 150px;
+    --word-h: 90px;
+    --image-w: 150px;
+    --image-h: 150px;
   }
-  .word-card { font-size: 24px; }
+  .word-card { font-size: 28px; }
   .card-row { gap: 12px; }
   .celebration-box { padding: 36px 28px; border-radius: 28px; }
   .celebration-box h2 { font-size: 24px; }
@@ -797,11 +797,11 @@ body::before {
 
 @media (max-width: 400px) {
   :root {
-    --word-w: 105px;
-    --word-h: 62px;
-    --image-w: 105px;
-    --image-h: 105px;
+    --word-w: 120px;
+    --word-h: 72px;
+    --image-w: 120px;
+    --image-h: 120px;
   }
-  .word-card { font-size: 20px; }
+  .word-card { font-size: 22px; }
   .card-row { gap: 8px; }
 }

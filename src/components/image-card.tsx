@@ -37,11 +37,11 @@ export const ImageCard = memo(function ImageCard({
       onClick={() => !isMatched && onClick(slot)}
     >
       {imgError ? (
-        <span className="placeholder">{word}</span>
+        <span className="placeholder">{word.toLowerCase()}</span>
       ) : (
         <img
           src={image}
-          alt={word}
+          alt={word.toLowerCase()}
           onError={() => setImgError(true)}
         />
       )}

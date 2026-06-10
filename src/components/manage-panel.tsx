@@ -130,7 +130,7 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
           <option value="">选择已有图片</option>
           {words.map((w) => (
             <option key={w.image} value={w.image}>
-              {w.word}
+              {w.word.toLowerCase()}
             </option>
           ))}
         </select>
@@ -164,7 +164,7 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
                 (e.target as HTMLImageElement).style.display = "none";
               }}
             />
-            <span className="word-text">{w.word}</span>
+            <span className="word-text">{w.word.toLowerCase()}</span>
             <button
               className="btn-delete"
               onClick={() => handleDelete(i)}

@@ -35,7 +35,7 @@ export const WordCard = memo(function WordCard({
       style={{ animationDelay: `${50 + slot * 90}ms` }}
       onClick={() => !isMatched && onClick(slot)}
     >
-      {word}
+      {word.toLowerCase()}
       {isMatched ? <span className="match-check">✓</span> : null}
     </div>
   );
