@@ -1,5 +1,4 @@
 "use client";
-import { memo } from "react";
 
 interface WordCardProps {
   word: string;
@@ -10,7 +9,7 @@ interface WordCardProps {
   onClick: (slot: number) => void;
 }
 
-export const WordCard = memo(function WordCard({
+export function WordCard({
   word,
   slot,
   isSelected,
@@ -33,10 +32,13 @@ export const WordCard = memo(function WordCard({
     <div
       className={cls}
       style={{ animationDelay: `${50 + slot * 90}ms` }}
-      onClick={() => !isMatched && onClick(slot)}
+      onClick={() => {
+        console.log("[TTS] WordCard clicked, slot:", slot, "isMatched:", isMatched);
+        if (!isMatched) onClick(slot);
+      }}
     >
       {word.toLowerCase()}
       {isMatched ? <span className="match-check">✓</span> : null}
     </div>
   );
-});
+}

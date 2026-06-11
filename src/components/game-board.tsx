@@ -79,10 +79,12 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   // ---- 音频：配对模式 — 选单词时朗读 ----
   const selectWord = useCallback(
     (slot: number) => {
+      console.log("[TTS] selectWord called, audioOn:", audioOn, "matched:", matchState.matchedSlots.has(slot), "selectedSlot:", matchState.selectedWordSlot, "slot:", slot);
       if (audioOn && !matchState.matchedSlots.has(slot)) {
         const w = matchState.roundWords[slot];
-        // 如果当前已选中同一单词（取消选中），不读
+        console.log("[TTS] word:", w.word);
         if (matchState.selectedWordSlot !== slot) {
+          console.log("[TTS] calling speak...");
           speak(w.word);
         }
       }

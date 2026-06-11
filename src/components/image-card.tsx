@@ -1,5 +1,5 @@
 "use client";
-import { memo, useState } from "react";
+import { useState } from "react";
 
 interface ImageCardProps {
   image: string;
@@ -10,7 +10,7 @@ interface ImageCardProps {
   onClick: (slot: number) => void;
 }
 
-export const ImageCard = memo(function ImageCard({
+export function ImageCard({
   image,
   word,
   slot,
@@ -49,4 +49,4 @@ export const ImageCard = memo(function ImageCard({
       {isMatched ? <span className="image-card-check">✓</span> : null}
     </div>
   );
-});
+}
