@@ -932,28 +932,71 @@ body::before {
 
 /* ===== 响应式 ===== */
 @media (max-width: 640px) {
-  body { padding: 14px 12px 40px; }
-  .header h1 { font-size: 24px; }
+  .container { padding: 10px 12px; }
+  .header h1 { font-size: 22px; }
   :root {
-    --word-w: 150px;
-    --word-h: 90px;
-    --image-w: 150px;
-    --image-h: 150px;
+    --word-w: 140px;
+    --word-h: 82px;
+    --image-w: 140px;
+    --image-h: 140px;
   }
-  .word-card { font-size: 28px; }
-  .card-row { gap: 12px; }
-  .celebration-box { padding: 36px 28px; border-radius: 28px; }
-  .celebration-box h2 { font-size: 24px; }
-  .celebration-box .emoji { font-size: 56px; }
+  .word-card { font-size: 25px; }
+  .card-row { gap: 10px; }
+  .card-connector { gap: 10px; }
+  .mode-tabs { gap: 6px; }
+  .mode-tab { padding: 7px 14px; font-size: 13px; }
+  .top-actions { top: 12px; right: 12px; gap: 8px; }
+  .btn-manage { padding: 8px 16px; font-size: 13px; }
+  .btn-audio { width: 36px; height: 36px; }
+  .celebration-box { padding: 32px 24px; border-radius: 24px; }
+  .celebration-box h2 { font-size: 22px; }
+  .celebration-box .emoji { font-size: 52px; }
+  .manage-panel { max-width: 95vw; }
+  .manage-panel-header { padding: 20px 20px 0; }
+  .manage-panel-body { padding: 0 20px; }
+  .manage-panel-footer { padding: 0 20px 20px; }
+  .add-form { flex-direction: column; align-items: stretch; }
+  .add-form input[type="text"] { width: 100%; }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 480px) {
+  .container { padding: 8px 10px; }
+  .header h1 { font-size: 20px; }
+  .header { padding: 2px 0 4px; }
   :root {
-    --word-w: 120px;
-    --word-h: 72px;
-    --image-w: 120px;
-    --image-h: 120px;
+    --word-w: 110px;
+    --word-h: 66px;
+    --image-w: 110px;
+    --image-h: 110px;
   }
   .word-card { font-size: 22px; }
   .card-row { gap: 8px; }
+  .card-connector { gap: 6px; }
+  .card-connector::before { left: 5%; right: 5%; }
+  .mode-tabs { gap: 4px; }
+  .mode-tab { padding: 6px 10px; font-size: 12px; }
+  .mode-tab .tab-label { display: none; }
+  .top-actions { top: 8px; right: 8px; gap: 6px; }
+  .btn-manage { padding: 7px 12px; font-size: 12px; }
+  .btn-manage span { display: none; }
+  .btn-audio { width: 32px; height: 32px; }
+  .status-bar { flex-direction: column; gap: 8px; align-items: flex-start; }
+  .btn-play-again { width: 100%; justify-content: center; }
+  .manage-panel { padding: 0; border-radius: 20px 20px 0 0; max-width: 100%; max-height: 90dvh; }
+  .manage-panel-header { padding: 18px 16px 0; }
+  .manage-panel-body { padding: 0 16px; }
+  .manage-panel-footer { padding: 0 16px 16px; }
+  .btn-modal-close { top: 16px; right: 16px; }
+} 
+
+@media (max-width: 380px) {
+  :root {
+    --word-w: 95px;
+    --word-h: 56px;
+    --image-w: 95px;
+    --image-h: 95px;
+  }
+  .word-card { font-size: 19px; }
+  .card-row { gap: 6px; }
+  .mode-tab { padding: 5px 8px; font-size: 11px; }
 }

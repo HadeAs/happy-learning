@@ -173,7 +173,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
               }}
             >
               <Icon size={18} />
-              <span style={{ marginLeft: 5 }}>{m.label}</span>
+              <span style={{ marginLeft: 5 }} className="tab-label">{m.label}</span>
             </button>
           );
         })}
