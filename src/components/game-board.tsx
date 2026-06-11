@@ -76,42 +76,20 @@ export function GameBoard({ initialWords }: GameBoardProps) {
 
   const { state: pickState, select: rawPickSelect, newGame: newPick } = usePickGame(words);
 
-  // ---- 音频：配对模式 — 选单词时朗读 ----
-  const selectWord = useCallback(
-    (slot: number) => {
-      console.log("[TTS] selectWord called, audioOn:", audioOn, "matched:", matchState.matchedSlots.has(slot), "selectedSlot:", matchState.selectedWordSlot, "slot:", slot);
-      if (audioOn && !matchState.matchedSlots.has(slot)) {
-        const w = matchState.roundWords[slot];
-        console.log("[TTS] word:", w.word);
-        if (matchState.selectedWordSlot !== slot) {
-          console.log("[TTS] calling speak...");
-          speak(w.word);
-        }
-      }
-      rawSelectWord(slot);
-    },
-    [audioOn, matchState, rawSelectWord],
-  );
-
-  // ---- 音频：选择模式 — 答对时朗读 ----
-  const pickSelect = useCallback(
-    (displayPos: number) => {
-      if (audioOn && mode === "word-pick") {
-        // 看图选词：点击任意单词都朗读
-        const w = pickState.candidates[pickState.order[displayPos]];
-        speak(w.word);
-      }
-      rawPickSelect(displayPos);
-    },
-    [audioOn, mode, pickState.candidates, pickState.order, rawPickSelect],
-  );
-
   // 看词选图/看图选词：答对时朗读
   useEffect(() => {
     if (!audioOn) return;
     if (!pickState.justCorrect) return;
     speak(pickState.correct.word);
   }, [audioOn, pickState.justCorrect, pickState.correct.word]);
+
+  // 看词选图：出新题时朗读（监听单词变化）
+  useEffect(() => {
+    if (!audioOn || mode !== "image-pick") return;
+    if (pickState.justCorrect) return; // 答对已读，不出声
+    speak(pickState.correct.word);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioOn, mode, pickState.correct.word]);
 
   const handlePlayAgain = useCallback(() => {
     setShowCelebration(false);
@@ -215,7 +193,8 @@ export function GameBoard({ initialWords }: GameBoardProps) {
                   isSelected={matchState.selectedWordSlot === slot}
                   isMatched={matchState.matchedSlots.has(slot)}
                   isWrong={matchState.wrongWordSlot === slot}
-                  onClick={selectWord}
+                  audioOn={audioOn}
+                  onClick={rawSelectWord}
                 />
               );
             })}
@@ -304,7 +283,8 @@ export function GameBoard({ initialWords }: GameBoardProps) {
                   isSelected={false}
                   isMatched={isCorrectPick}
                   isWrong={isWrongPick}
-                  onClick={pickSelect}
+                  audioOn={audioOn}
+                  onClick={rawPickSelect}
                 />
               );
             })}

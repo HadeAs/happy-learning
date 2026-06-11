@@ -24,10 +24,5 @@ export function speak(word: string): void {
   u.pitch = 1;
   u.volume = 1;
   if (voice) u.voice = voice;
-
-  u.onstart = () => console.log("[TTS] ✅ playing:", word.toLowerCase());
-  u.onend = () => console.log("[TTS] ✅ done:", word.toLowerCase());
-  u.onerror = (e) => console.error("[TTS] ❌ error:", word.toLowerCase(), e.error);
-
   synth.speak(u);
 }

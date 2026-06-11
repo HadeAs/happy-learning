@@ -1,4 +1,5 @@
 "use client";
+import { speak } from "@/lib/speech";
 
 interface WordCardProps {
   word: string;
@@ -6,6 +7,7 @@ interface WordCardProps {
   isSelected: boolean;
   isMatched: boolean;
   isWrong: boolean;
+  audioOn: boolean;
   onClick: (slot: number) => void;
 }
 
@@ -15,6 +17,7 @@ export function WordCard({
   isSelected,
   isMatched,
   isWrong,
+  audioOn,
   onClick,
 }: WordCardProps) {
   const cls = [
@@ -33,8 +36,10 @@ export function WordCard({
       className={cls}
       style={{ animationDelay: `${50 + slot * 90}ms` }}
       onClick={() => {
-        console.log("[TTS] WordCard clicked, slot:", slot, "isMatched:", isMatched);
-        if (!isMatched) onClick(slot);
+        if (isMatched) return;
+        // 在原生点击事件中同步调用 speak，紧贴用户手势
+        if (audioOn && !isSelected) speak(word);
+        onClick(slot);
       }}
     >
       {word.toLowerCase()}
