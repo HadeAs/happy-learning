@@ -972,47 +972,52 @@ body::before {
     gap: 4px;
   }
 
-  /* 左右两列均用 2×2 网格 */
+  /* ---- 左右布局：左列 + 连接器 + 右列 ---- */
+  .game-area {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
   .game-area > .card-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    flex-direction: column;
+    flex-wrap: nowrap;
     gap: 6px;
-    justify-items: center;
     flex-shrink: 0;
   }
 
-  /* 提示卡片（看词选图/看图选词）横跨两格居中 */
+  /* 提示卡片在看词选图/看图选词中单独一排 */
   .prompt-card {
-    grid-column: 1 / -1;
-    justify-self: center;
+    display: contents;
   }
 
   /* 纵向虚线连接器 */
   .card-connector {
-    width: 8px;
+    width: 10px;
     height: auto;
     flex-shrink: 0;
     align-self: stretch;
     flex-direction: column;
     gap: 8px;
+    justify-content: center;
   }
   .card-connector::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 8%;
-    bottom: 8%;
-    width: 2px;
+    left: 50% !important;
+    right: auto !important;
+    top: 4% !important;
+    bottom: 4% !important;
+    width: 2px !important;
+    height: auto !important;
     background: repeating-linear-gradient(
       0deg,
       var(--lavender) 0px,
       var(--lavender) 5px,
       transparent 5px,
       transparent 12px
-    );
-    opacity: 0.35;
-    border-radius: 1px;
-    transform: translateX(-50%);
+    ) !important;
+    transform: translateX(-50%) !important;
+    border-radius: 1px !important;
   }
   .connector-dot { width: 6px; height: 6px; }
 
