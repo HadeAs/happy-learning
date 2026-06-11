@@ -23,6 +23,8 @@ export interface PickState {
   initialized: boolean;
   /** 当前轮是否刚正确（用于短暂绿闪后自动下一轮） */
   justCorrect: boolean;
+  /** 完整的单词库引用（每轮从中随机抽题） */
+  wordBank: Word[];
 }
 
 type Action =
@@ -36,8 +38,8 @@ function pickRounds(words: Word[], count: number): Word[] {
   return indices.slice(0, count).map((i) => words[i]);
 }
 
-function createRound(words: Word[]): PickState {
-  const [correct, ...distractors] = pickRounds(words, 4);
+function createRound(wordBank: Word[]): PickState {
+  const [correct, ...distractors] = pickRounds(wordBank, 4);
   const candidates = shuffleArray([correct, ...distractors]);
   return {
     correct,
@@ -50,6 +52,7 @@ function createRound(words: Word[]): PickState {
     locked: false,
     initialized: true,
     justCorrect: false,
+    wordBank,
   };
 }
 
@@ -83,7 +86,7 @@ function reducer(state: PickState, action: Action): PickState {
     }
 
     case "NEXT_ROUND": {
-      const next = createRound(state.candidates.map((_, i) => state.candidates[i]));
+      const next = createRound(state.wordBank);
       return {
         ...next,
         correctCount: state.correctCount,
