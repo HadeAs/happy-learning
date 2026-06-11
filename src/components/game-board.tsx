@@ -185,7 +185,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
           {/* 提示单词 */}
           <div className="card-row">
             <div className="prompt-card">
-              <div className="card word-card" style={{ pointerEvents: "none", borderColor: "var(--coral)", background: "var(--coral-light)", transform: "scale(1.05)" }}>
+              <div className="card word-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)" }}>
                 {pickState.correct.word.toLowerCase()}
               </div>
             </div>
@@ -227,7 +227,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
           {/* 提示图片 */}
           <div className="card-row">
             <div className="prompt-card">
-              <div className="card image-card" style={{ pointerEvents: "none", borderColor: "var(--coral)", background: "var(--coral-light)", transform: "scale(1.05)", width: 160, height: 160 }}>
+              <div className="card image-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)", width: 160, height: 160 }}>
                 <img src={pickState.correct.image} alt={pickState.correct.word} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
               </div>
             </div>
