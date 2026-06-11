@@ -143,7 +143,7 @@ export function usePickGame(words: Word[]) {
     if (state.justCorrect) {
       timerRef.current = setTimeout(() => {
         dispatch({ type: "NEXT_ROUND" });
-      }, 800);
+      }, 1500);
       return () => {
         if (timerRef.current) clearTimeout(timerRef.current);
       };
