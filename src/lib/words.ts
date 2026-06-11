@@ -32,4 +32,5 @@ export const seedWords: Word[] = [
   { word: "Pig", image: "img/pig.png" },
   { word: "Sheep", image: "img/sheep.png" },
   { word: "Turtle", image: "img/turtle.png" },
+  { word: "Elephant", image: "img/elephant.png" },
 ];
