@@ -1,6 +1,7 @@
 "use client";
 import { useState, useCallback, useRef } from "react";
 import type { Word } from "@/types";
+import { CloseIcon, UploadIcon, PlusIcon, ExportIcon, SettingsIcon } from "./icons";
 
 interface ManagePanelProps {
   words: Word[];
@@ -111,8 +112,13 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
 
   return (
     <div className="manage-panel">
-      <button className="btn-modal-close" onClick={onClose} aria-label="关闭">✕</button>
-      <h3>📝 单词库管理</h3>
+      <button className="btn-modal-close" onClick={onClose} aria-label="关闭">
+        <CloseIcon size={16} />
+      </button>
+      <h3>
+        <SettingsIcon size={20} />
+        <span style={{ marginLeft: 6, verticalAlign: "middle" }}>单词库管理</span>
+      </h3>
 
       <div className="add-form">
         <input
@@ -142,14 +148,15 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
           style={{ display: "none" }}
         />
         <label htmlFor="imageUpload" className="btn-upload">
-          📷 上传新图片
+          <UploadIcon size={16} />
+          <span style={{ marginLeft: 4 }}>上传新图片</span>
         </label>
         <button
           className="btn-add"
           onClick={handleAdd}
           disabled={adding}
         >
-          + 添加
+          <PlusIcon size={16} /> 添加
         </button>
       </div>
 
@@ -177,7 +184,8 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
 
       <div className="manage-actions">
         <button className="btn-export" onClick={handleExport}>
-          💾 导出单词库 (JSON)
+          <ExportIcon size={16} />
+          <span style={{ marginLeft: 4 }}>导出单词库 (JSON)</span>
         </button>
       </div>
       <p className="hint">

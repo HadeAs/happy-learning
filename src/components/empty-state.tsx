@@ -1,4 +1,5 @@
 "use client";
+import { BookIcon } from "./icons";
 
 interface EmptyStateProps {
   onGoManage: () => void;
@@ -7,7 +8,7 @@ interface EmptyStateProps {
 export function EmptyState({ onGoManage }: EmptyStateProps) {
   return (
     <div className="empty-state">
-      <div className="emoji">📚</div>
+      <div className="emoji"><BookIcon size={56} /></div>
       <p>单词库至少需要 4 个单词才能开始游戏哦～</p>
       <button className="btn-manage" onClick={onGoManage}>
         去添加单词

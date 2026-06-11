@@ -105,6 +105,10 @@ body::before {
   letter-spacing: -0.3px;
   text-shadow: 0 2px 8px rgba(255,138,128,0.15);
   text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
 }
 
 .btn-manage {
@@ -123,6 +127,9 @@ body::before {
   font-size: 14px;
   font-weight: 700;
   transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 .btn-manage:hover {
   background: var(--lavender);
@@ -404,6 +411,11 @@ body::before {
   font-weight: 600;
   color: var(--slate);
 }
+.status-bar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
 .error-count {
   color: var(--berry);
   font-weight: 800;
@@ -422,6 +434,9 @@ body::before {
   cursor: pointer;
   transition: all 0.25s ease;
   box-shadow: 0 4px 14px var(--coral-glow);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 .btn-play-again:hover {
   transform: translateY(-2px);
@@ -493,6 +508,7 @@ body::before {
   position: relative;
   z-index: 1;
   animation: emojiBounce 0.8s ease infinite alternate;
+  display: inline-block;
 }
 @keyframes emojiBounce {
   0% { transform: translateY(0); }
@@ -642,6 +658,9 @@ body::before {
   color: var(--slate);
   transition: all 0.2s;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 .mode-tab:hover {
   border-color: var(--lavender);

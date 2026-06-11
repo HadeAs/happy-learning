@@ -8,6 +8,16 @@ import { WordCard } from "./word-card";
 import { ImageCard } from "./image-card";
 import { EmptyState } from "./empty-state";
 import { ManagePanel } from "./manage-panel";
+import {
+  BalloonIcon,
+  SettingsIcon,
+  MatchIcon,
+  ImagePickIcon,
+  WordPickIcon,
+  RefreshIcon,
+  CheckIcon,
+  CrossIcon,
+} from "./icons";
 
 const Celebration = dynamic(
   () => import("./celebration").then((m) => ({ default: m.Celebration })),
@@ -16,10 +26,10 @@ const Celebration = dynamic(
 
 const MIN_WORDS = 4;
 
-const MODES: { key: GameMode; label: string; icon: string }[] = [
-  { key: "match", label: "🔤 单词配对", icon: "" },
-  { key: "image-pick", label: "🖼️ 看词选图", icon: "" },
-  { key: "word-pick", label: "📝 看图选词", icon: "" },
+const MODES: { key: GameMode; label: string; Icon: React.ComponentType<{ size?: number }> }[] = [
+  { key: "match", label: "单词配对", Icon: MatchIcon },
+  { key: "image-pick", label: "看词选图", Icon: ImagePickIcon },
+  { key: "word-pick", label: "看图选词", Icon: WordPickIcon },
 ];
 
 function CardConnector() {
@@ -43,13 +53,11 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   const [showManage, setShowManage] = useState(false);
   const [mode, setMode] = useState<GameMode>("match");
 
-  // ---- 配对模式 ----
   const handleComplete = useCallback(() => {
     setShowCelebration(true);
   }, []);
   const { state: matchState, selectWord, clickImage, newGame: newMatch } = useGameState(words, handleComplete);
 
-  // ---- 选择模式 ----
   const { state: pickState, select: pickSelect, newGame: newPick } = usePickGame(words);
 
   const handlePlayAgain = useCallback(() => {
@@ -70,7 +78,8 @@ export function GameBoard({ initialWords }: GameBoardProps) {
 
   const manageBtn = (
     <button className="btn-manage" onClick={openManage}>
-      📝 管理单词库
+      <SettingsIcon size={16} />
+      <span style={{ marginLeft: 6 }}>管理单词库</span>
     </button>
   );
 
@@ -92,14 +101,13 @@ export function GameBoard({ initialWords }: GameBoardProps) {
     );
   }
 
-  // ---- 等待客户端初始化 ----
   const isReady = mode === "match" ? matchState.initialized : pickState.initialized;
   if (!isReady) {
     return (
       <div className="container">
         {manageBtn}
         <div className="header">
-          <h1>🎈 幼儿英语单词匹配游戏</h1>
+          <h1><BalloonIcon size={28} /> 幼儿英语单词匹配游戏</h1>
         </div>
         <div className="game-area" style={{ justifyContent: "center", alignItems: "center" }}>
           <p style={{ color: "var(--slate)", fontSize: 18, fontWeight: 600 }}>加载中...</p>
@@ -113,23 +121,26 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       {manageBtn}
 
       <div className="header">
-        <h1>🎈 幼儿英语单词匹配游戏</h1>
+        <h1><BalloonIcon size={30} /> 幼儿英语单词匹配游戏</h1>
       </div>
 
-      {/* 模式切换 */}
       <div className="mode-tabs">
-        {MODES.map((m) => (
-          <button
-            key={m.key}
-            className={`mode-tab${mode === m.key ? " active" : ""}`}
-            onClick={() => {
-              setMode(m.key);
-              setShowCelebration(false);
-            }}
-          >
-            {m.label}
-          </button>
-        ))}
+        {MODES.map((m) => {
+          const Icon = m.Icon;
+          return (
+            <button
+              key={m.key}
+              className={`mode-tab${mode === m.key ? " active" : ""}`}
+              onClick={() => {
+                setMode(m.key);
+                setShowCelebration(false);
+              }}
+            >
+              <Icon size={18} />
+              <span style={{ marginLeft: 5 }}>{m.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* ---- 模式 A：单词配对 ---- */}
@@ -170,10 +181,10 @@ export function GameBoard({ initialWords }: GameBoardProps) {
           </div>
           <div className="status-bar">
             <span>
-              错误：<span className="error-count">{matchState.errorCount}</span> 次
+              <CrossIcon size={18} /> <span className="error-count">{matchState.errorCount}</span> 次
             </span>
             <button className="btn-play-again" onClick={handlePlayAgain}>
-              🔄 再来一局
+              <RefreshIcon size={18} /> 再来一局
             </button>
           </div>
         </div>
@@ -182,7 +193,6 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       {/* ---- 模式 B：看词选图 ---- */}
       {mode === "image-pick" && (
         <div className="game-area">
-          {/* 提示单词 */}
           <div className="card-row">
             <div className="prompt-card">
               <div className="card word-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)" }}>
@@ -191,7 +201,6 @@ export function GameBoard({ initialWords }: GameBoardProps) {
             </div>
           </div>
           <CardConnector />
-          {/* 四张图片 */}
           <div className="card-row">
             {pickState.order.map((candIdx, displayPos) => {
               const w = pickState.candidates[candIdx];
@@ -212,10 +221,10 @@ export function GameBoard({ initialWords }: GameBoardProps) {
           </div>
           <div className="status-bar">
             <span>
-              ✅ {pickState.correctCount} · ❌ {pickState.errorCount} 次
+              <CheckIcon size={18} /> {pickState.correctCount} · <CrossIcon size={18} /> {pickState.errorCount} 次
             </span>
             <button className="btn-play-again" onClick={handlePlayAgain}>
-              🔄 重新开始
+              <RefreshIcon size={18} /> 重新开始
             </button>
           </div>
         </div>
@@ -224,7 +233,6 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       {/* ---- 模式 C：看图选词 ---- */}
       {mode === "word-pick" && (
         <div className="game-area">
-          {/* 提示图片 */}
           <div className="card-row">
             <div className="prompt-card">
               <div className="card image-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)", width: 160, height: 160 }}>
@@ -233,7 +241,6 @@ export function GameBoard({ initialWords }: GameBoardProps) {
             </div>
           </div>
           <CardConnector />
-          {/* 四个单词 */}
           <div className="card-row">
             {pickState.order.map((candIdx, displayPos) => {
               const w = pickState.candidates[candIdx];
@@ -254,16 +261,15 @@ export function GameBoard({ initialWords }: GameBoardProps) {
           </div>
           <div className="status-bar">
             <span>
-              ✅ {pickState.correctCount} · ❌ {pickState.errorCount} 次
+              <CheckIcon size={18} /> {pickState.correctCount} · <CrossIcon size={18} /> {pickState.errorCount} 次
             </span>
             <button className="btn-play-again" onClick={handlePlayAgain}>
-              🔄 重新开始
+              <RefreshIcon size={18} /> 重新开始
             </button>
           </div>
         </div>
       )}
 
-      {/* 管理弹窗 */}
       {showManage ? (
         <div className="manage-modal-overlay" onClick={closeManage}>
           <div onClick={(e) => e.stopPropagation()}>

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { StarIcon, RefreshIcon } from "./icons";
 
 // Hoisted constants — module level (rendering-hoist-jsx)
 const CONFETTI_COLORS = [
@@ -60,7 +61,7 @@ export function Celebration({ errorCount, onPlayAgain }: CelebrationProps) {
     <>
       <div className="celebration-overlay">
         <div className="celebration-box">
-          <div className="emoji">🎉</div>
+          <div className="emoji"><StarIcon size={72} /></div>
           <h2>太棒了！全部正确！</h2>
           <p className="errors">
             {errorCount === 0
@@ -68,7 +69,7 @@ export function Celebration({ errorCount, onPlayAgain }: CelebrationProps) {
               : `共错 ${errorCount} 次，继续加油哦～`}
           </p>
           <button className="btn-play-again" onClick={onPlayAgain}>
-            🔄 再来一局
+            <RefreshIcon size={18} /> 再来一局
           </button>
         </div>
       </div>
