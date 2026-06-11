@@ -72,10 +72,24 @@ export function WordPickIcon({ size = 24 }: IconProps) {
 // ──── 刷新 ────
 export function RefreshIcon({ size = 20 }: IconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 20 20" fill="none">
-      <path d="M14 4 A7 7 0 0 0 6 6 A7 7 0 0 0 5 13"
-        fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M5 13 L2 12 M5 13 L4 16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {/* 圆底手绘风格旋转箭头 */}
+      <path
+        d="M17 7 C15 5, 10 5, 8 7 C5 9, 5 14, 8 16 C10 18, 15 18, 17 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* 箭头尖 */}
+      <path
+        d="M17 7 L13 5 M17 7 L15 11"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
