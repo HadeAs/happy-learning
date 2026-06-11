@@ -17,6 +17,7 @@ import {
   RefreshIcon,
   CheckIcon,
   CrossIcon,
+  SwapIcon,
 } from "./icons";
 
 const Celebration = dynamic(
@@ -228,7 +229,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
               <CheckIcon size={18} /> {pickState.correctCount} · <CrossIcon size={18} /> {pickState.errorCount} 次
             </span>
             <button className="btn-play-again" onClick={handlePlayAgain}>
-              <RefreshIcon size={18} /> 重新开始
+              <SwapIcon size={18} /> 换一个
             </button>
           </div>
         </div>
@@ -268,7 +269,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
               <CheckIcon size={18} /> {pickState.correctCount} · <CrossIcon size={18} /> {pickState.errorCount} 次
             </span>
             <button className="btn-play-again" onClick={handlePlayAgain}>
-              <RefreshIcon size={18} /> 重新开始
+              <SwapIcon size={18} /> 换一个
             </button>
           </div>
         </div>

@@ -141,6 +141,32 @@ export function ExportIcon({ size = 20 }: IconProps) {
   );
 }
 
+// ──── 换一个 / 跳过 ────
+export function SwapIcon({ size = 20 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path
+        d="M6 8 L18 8 C20 8, 21 10, 18 12"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      <path d="M18 12 L14 9 M18 12 L16 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M18 16 L6 16 C4 16, 3 14, 6 12"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      <path d="M6 12 L10 9 M6 12 L8 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 // ──── 星星（庆祝）────
 export function StarIcon({ size = 72 }: IconProps) {
   return (
