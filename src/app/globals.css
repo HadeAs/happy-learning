@@ -111,11 +111,38 @@ body::before {
   justify-content: center;
 }
 
-.btn-manage {
+/* ===== 右上角按钮组 ===== */
+.top-actions {
   position: fixed;
   top: 20px;
   right: 20px;
   z-index: 50;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-audio {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--lavender);
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(8px);
+  color: var(--lavender);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  padding: 0;
+}
+.btn-audio:hover {
+  background: var(--lavender);
+  color: white;
+  box-shadow: 0 4px 16px rgba(179,157,219,0.30);
+}
+
+.btn-manage {
   padding: 10px 20px;
   border: 2px solid var(--lavender);
   background: rgba(255,255,255,0.82);

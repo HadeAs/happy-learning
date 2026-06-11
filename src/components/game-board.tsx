@@ -1,9 +1,10 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import type { Word, GameMode } from "@/types";
 import { useGameState } from "@/lib/useGameState";
 import { usePickGame } from "@/lib/usePickGame";
+import { speak } from "@/lib/speech";
 import { WordCard } from "./word-card";
 import { ImageCard } from "./image-card";
 import { EmptyState } from "./empty-state";
@@ -18,6 +19,8 @@ import {
   CheckIcon,
   CrossIcon,
   SwapIcon,
+  SpeakerOnIcon,
+  SpeakerOffIcon,
 } from "./icons";
 
 const Celebration = dynamic(
@@ -50,7 +53,6 @@ interface GameBoardProps {
 
 export function GameBoard({ initialWords }: GameBoardProps) {
   const [words, setWords] = useState<Word[]>(() => {
-    // 优先从 localStorage 恢复用户编辑后的单词库
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("wordMatchGame_words");
       if (stored) {
@@ -65,13 +67,55 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   const [showCelebration, setShowCelebration] = useState(false);
   const [showManage, setShowManage] = useState(false);
   const [mode, setMode] = useState<GameMode>("match");
+  const [audioOn, setAudioOn] = useState(false);
+  const prevPickCorrect = useRef(0);
 
   const handleComplete = useCallback(() => {
     setShowCelebration(true);
   }, []);
-  const { state: matchState, selectWord, clickImage, newGame: newMatch } = useGameState(words, handleComplete);
+  const { state: matchState, selectWord: rawSelectWord, clickImage, newGame: newMatch } = useGameState(words, handleComplete);
 
-  const { state: pickState, select: pickSelect, newGame: newPick } = usePickGame(words);
+  const { state: pickState, select: rawPickSelect, newGame: newPick } = usePickGame(words);
+
+  // ---- 音频：配对模式 — 选单词时朗读 ----
+  const selectWord = useCallback(
+    (slot: number) => {
+      if (audioOn && !matchState.matchedSlots.has(slot)) {
+        const w = matchState.roundWords[slot];
+        // 如果当前已选中同一单词（取消选中），不读
+        if (matchState.selectedWordSlot !== slot) {
+          speak(w.word);
+        }
+      }
+      rawSelectWord(slot);
+    },
+    [audioOn, matchState, rawSelectWord],
+  );
+
+  // ---- 音频：选择模式 — 点击单词/看词选图出题时朗读 ----
+  const pickSelect = useCallback(
+    (displayPos: number) => {
+      if (audioOn) {
+        const w = pickState.candidates[pickState.order[displayPos]];
+        speak(w.word);
+      }
+      rawPickSelect(displayPos);
+    },
+    [audioOn, pickState.candidates, pickState.order, rawPickSelect],
+  );
+
+  // 看词选图：出新题时朗读
+  useEffect(() => {
+    if (audioOn && mode === "image-pick" && pickState.correctCount !== prevPickCorrect.current) {
+      prevPickCorrect.current = pickState.correctCount;
+      speak(pickState.correct.word);
+    }
+  }, [audioOn, mode, pickState.correctCount, pickState.correct.word]);
+
+  // 切换模式/重置计数
+  useEffect(() => {
+    prevPickCorrect.current = pickState.correctCount;
+  }, [mode, pickState.correctCount]);
 
   const handlePlayAgain = useCallback(() => {
     setShowCelebration(false);
@@ -89,17 +133,22 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   const openManage = useCallback(() => setShowManage(true), []);
   const closeManage = useCallback(() => setShowManage(false), []);
 
-  const manageBtn = (
-    <button className="btn-manage" onClick={openManage}>
-      <SettingsIcon size={16} />
-      <span style={{ marginLeft: 6 }}>管理单词库</span>
-    </button>
+  const topButtons = (
+    <div className="top-actions">
+      <button className="btn-audio" onClick={() => setAudioOn((prev) => !prev)} title={audioOn ? "关闭发音" : "开启发音"}>
+        {audioOn ? <SpeakerOnIcon size={18} /> : <SpeakerOffIcon size={18} />}
+      </button>
+      <button className="btn-manage" onClick={openManage}>
+        <SettingsIcon size={16} />
+        <span style={{ marginLeft: 6 }}>管理单词库</span>
+      </button>
+    </div>
   );
 
   if (words.length < MIN_WORDS) {
     return (
       <div className="container">
-        {manageBtn}
+        {topButtons}
         <div className="game-area" style={{ justifyContent: "center" }}>
           <EmptyState onGoManage={openManage} />
         </div>
@@ -118,7 +167,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   if (!isReady) {
     return (
       <div className="container">
-        {manageBtn}
+        {topButtons}
         <div className="header">
           <h1><BalloonIcon size={28} /> 快乐学英语</h1>
         </div>
@@ -131,7 +180,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
 
   return (
     <div className="container">
-      {manageBtn}
+      {topButtons}
 
       <div className="header">
         <h1><BalloonIcon size={30} /> 快乐学英语</h1>

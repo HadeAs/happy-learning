@@ -167,6 +167,34 @@ export function SwapIcon({ size = 20 }: IconProps) {
   );
 }
 
+// ──── 音频开 ────
+export function SpeakerOnIcon({ size = 20 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M5 9 L9 9 L14 5 L14 19 L9 15 L5 15 Z"
+        fill="var(--mint)" stroke="currentColor" strokeWidth="1.8"
+        strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M17 8 C19 10, 19 14, 17 16" stroke="currentColor" strokeWidth="1.8"
+        strokeLinecap="round" fill="none" />
+      <path d="M19 5 C22 8, 22 16, 19 19" stroke="currentColor" strokeWidth="1.8"
+        strokeLinecap="round" fill="none" />
+    </svg>
+  );
+}
+
+// ──── 音频关 ────
+export function SpeakerOffIcon({ size = 20 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M5 9 L9 9 L14 5 L14 19 L9 15 L5 15 Z"
+        fill="none" stroke="currentColor" strokeWidth="1.8"
+        strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M17 8 L21 16 M21 8 L17 16" stroke="currentColor" strokeWidth="1.8"
+        strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // ──── 星星（庆祝）────
 export function StarIcon({ size = 72 }: IconProps) {
   return (
