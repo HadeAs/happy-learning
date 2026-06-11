@@ -73,10 +73,9 @@ export function WordPickIcon({ size = 24 }: IconProps) {
 export function RefreshIcon({ size = 20 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 20 20" fill="none">
-      <path d="M15 5 C13 2, 7 2, 5 5 C3 8, 3 12, 5 14 C7 17, 13 17, 15 14"
+      <path d="M14 4 A7 7 0 0 0 6 6 A7 7 0 0 0 5 13"
         fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M15 5 L15 1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M15 5 L19 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M5 13 L2 12 M5 13 L4 16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
