@@ -243,7 +243,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
                   slot={displayPos}
                   isMatched={isCorrectPick}
                   isWrong={isWrongPick}
-                  onClick={pickSelect}
+                  onClick={rawPickSelect}
                 />
               );
             })}
