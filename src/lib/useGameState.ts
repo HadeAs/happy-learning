@@ -14,6 +14,7 @@ export interface GameState {
   wrongWordSlot: number | null;
   errorCount: number;
   locked: boolean;
+  initialized: boolean;
 }
 
 type Action =
@@ -26,7 +27,7 @@ type Action =
 function reducer(state: GameState, action: Action): GameState {
   switch (action.type) {
     case "SELECT_WORD": {
-      if (state.locked) return state;
+      if (state.locked || !state.initialized) return state;
       if (state.matchedSlots.has(action.slot)) return state;
       return {
         ...state,
@@ -79,6 +80,7 @@ function reducer(state: GameState, action: Action): GameState {
         wrongWordSlot: null,
         errorCount: 0,
         locked: false,
+        initialized: true,
       };
     }
 
@@ -87,22 +89,18 @@ function reducer(state: GameState, action: Action): GameState {
   }
 }
 
-function makeInitialState(words: Word[]): GameState {
-  return reducer(
-    {
-      roundWords: [],
-      wordOrder: [],
-      imageOrder: [],
-      selectedWordSlot: null,
-      matchedSlots: new Set(),
-      wrongImageSlot: null,
-      wrongWordSlot: null,
-      errorCount: 0,
-      locked: false,
-    },
-    { type: "NEW_GAME", words },
-  );
-}
+const EMPTY_STATE: GameState = {
+  roundWords: [],
+  wordOrder: [],
+  imageOrder: [],
+  selectedWordSlot: null,
+  matchedSlots: new Set(),
+  wrongImageSlot: null,
+  wrongWordSlot: null,
+  errorCount: 0,
+  locked: false,
+  initialized: false,
+};
 
 // ==================== Hook ====================
 
@@ -110,9 +108,15 @@ export function useGameState(
   words: Word[],
   onComplete?: () => void,
 ) {
-  const [state, dispatch] = useReducer(reducer, words, makeInitialState);
+  const [state, dispatch] = useReducer(reducer, EMPTY_STATE);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevMatchedSize = useRef(state.matchedSlots.size);
+
+  // Start first game on client only — avoids SSR hydration mismatch from Math.random()
+  useEffect(() => {
+    dispatch({ type: "NEW_GAME", words });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Clear wrong animation after delay
   useEffect(() => {
@@ -132,7 +136,6 @@ export function useGameState(
       state.matchedSlots.size === 4 &&
       prevMatchedSize.current !== 4
     ) {
-      // Small delay so the last match renders first
       const t = setTimeout(() => onComplete?.(), 300);
       prevMatchedSize.current = 4;
       return () => clearTimeout(t);

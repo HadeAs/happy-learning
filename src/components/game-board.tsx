@@ -85,6 +85,21 @@ export function GameBoard({ initialWords }: GameBoardProps) {
     );
   }
 
+  // 等待客户端初始化（避免 SSR hydration mismatch）
+  if (!state.initialized) {
+    return (
+      <div className="container">
+        {manageBtn}
+        <div className="header">
+          <h1>🎈 幼儿英语单词匹配游戏</h1>
+        </div>
+        <div className="game-area" style={{ justifyContent: "center", alignItems: "center" }}>
+          <p style={{ color: "var(--slate)", fontSize: 18, fontWeight: 600 }}>加载中...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       {manageBtn}
