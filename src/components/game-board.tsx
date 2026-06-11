@@ -191,12 +191,6 @@ export function GameBoard({ initialWords }: GameBoardProps) {
               );
             })}
           </div>
-          <div className="status-bar">
-            <span />
-            <button className="btn-play-again" onClick={handlePlayAgain}>
-              <RefreshIcon size={18} /> 再来一局
-            </button>
-          </div>
         </div>
       )}
 
