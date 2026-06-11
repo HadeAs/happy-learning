@@ -622,6 +622,58 @@ body::before {
   color: white;
 }
 
+/* ===== 模式切换标签 ===== */
+.mode-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 0 12px;
+  flex-shrink: 0;
+}
+.mode-tab {
+  padding: 8px 18px;
+  border: 2px solid var(--cloud);
+  background: rgba(255,255,255,0.60);
+  border-radius: 24px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--slate);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.mode-tab:hover {
+  border-color: var(--lavender);
+  color: var(--lavender);
+}
+.mode-tab.active {
+  border-color: var(--coral);
+  background: var(--coral-light);
+  color: var(--coral);
+  box-shadow: 0 2px 10px var(--coral-glow);
+}
+
+/* ===== 选择模式：单个提示卡片 ===== */
+.prompt-card {
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+/* 正确闪绿 */
+.card.just-correct {
+  border-color: var(--mint) !important;
+  background: var(--mint-light) !important;
+  box-shadow: 0 4px 18px var(--mint-glow) !important;
+  pointer-events: none;
+  animation: correctPulse 0.6s ease;
+}
+@keyframes correctPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
 .add-form {
   display: flex;
   gap: 10px;
