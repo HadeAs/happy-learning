@@ -170,6 +170,7 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
                   className="thumb"
                   src={w.image}
                   alt={w.word}
+                  loading="lazy"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = "none";
                   }}

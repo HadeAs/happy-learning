@@ -42,6 +42,7 @@ export const ImageCard = memo(function ImageCard({
         <img
           src={image}
           alt={word.toLowerCase()}
+          loading="lazy"
           onError={() => setImgError(true)}
         />
       )}
