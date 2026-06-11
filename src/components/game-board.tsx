@@ -264,7 +264,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
               const w = matchState.roundWords[slot];
               return (
                 <ImageCard
-                  key={w.origIdx}
+                  key={`${roundKey}-${w.origIdx}`}
                   image={w.image}
                   word={w.word}
                   slot={slot}
@@ -300,7 +300,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
                 const isWrongPick = pickState.wrong === displayPos;
                 return (
                   <ImageCard
-                    key={displayPos}
+                    key={`${roundKey}-${displayPos}`}
                     image={w.image}
                     word={w.word}
                     slot={displayPos}
@@ -350,7 +350,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
                 const isWrongPick = pickState.wrong === displayPos;
                 return (
                   <WordCard
-                    key={displayPos}
+                    key={`${roundKey}-${displayPos}`}
                     word={w.word}
                     slot={displayPos}
                     isSelected={false}
