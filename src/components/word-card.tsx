@@ -1,4 +1,5 @@
 "use client";
+import { useRef } from "react";
 import { speak } from "@/lib/speech";
 
 interface WordCardProps {
@@ -11,6 +12,8 @@ interface WordCardProps {
   onClick: (slot: number) => void;
 }
 
+const THROTTLE_MS = 300;
+
 export function WordCard({
   word,
   slot,
@@ -20,6 +23,8 @@ export function WordCard({
   audioOn,
   onClick,
 }: WordCardProps) {
+  const lastClick = useRef(0);
+
   const cls = [
     "card",
     "word-card",
@@ -31,16 +36,21 @@ export function WordCard({
     .filter(Boolean)
     .join(" ");
 
+  const handleClick = () => {
+    if (isMatched) return;
+    const now = Date.now();
+    if (now - lastClick.current < THROTTLE_MS) return;
+    lastClick.current = now;
+
+    if (audioOn && !isSelected) speak(word);
+    onClick(slot);
+  };
+
   return (
     <div
       className={cls}
       style={{ animationDelay: `${50 + slot * 90}ms` }}
-      onClick={() => {
-        if (isMatched) return;
-        // 在原生点击事件中同步调用 speak，紧贴用户手势
-        if (audioOn && !isSelected) speak(word);
-        onClick(slot);
-      }}
+      onClick={handleClick}
     >
       {word.toLowerCase()}
       {isMatched ? <span className="match-check">✓</span> : null}
