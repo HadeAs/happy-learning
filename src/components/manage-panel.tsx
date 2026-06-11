@@ -1,7 +1,7 @@
 "use client";
 import { useState, useCallback, useRef } from "react";
 import type { Word } from "@/types";
-import { CloseIcon, UploadIcon, PlusIcon, ExportIcon, SettingsIcon } from "./icons";
+import { CloseIcon, UploadIcon, PlusIcon, SettingsIcon } from "./icons";
 
 interface ManagePanelProps {
   words: Word[];
@@ -26,7 +26,6 @@ function readFileAsDataURL(file: File): Promise<string> {
 
 export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps) {
   const [newWord, setNewWord] = useState("");
-  const [selectedImage, setSelectedImage] = useState("");
   const [adding, setAdding] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -41,25 +40,14 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
       return;
     }
 
+    if (!fileRef.current?.files?.length) {
+      alert("请上传图片");
+      return;
+    }
+
     setAdding(true);
     try {
-      let image: string | undefined;
-
-      if (fileRef.current?.files?.length) {
-        try {
-          image = await readFileAsDataURL(fileRef.current.files[0]);
-        } catch (e) {
-          alert((e as Error).message);
-          return;
-        }
-      } else {
-        image = selectedImage;
-      }
-
-      if (!image) {
-        alert("请选择已有图片或上传新图片");
-        return;
-      }
+      const image = await readFileAsDataURL(fileRef.current.files[0]);
 
       const formattedWord =
         word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -68,12 +56,13 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
       onWordsChange(next);
 
       setNewWord("");
-      setSelectedImage("");
       if (fileRef.current) fileRef.current.value = "";
+    } catch (e) {
+      alert((e as Error).message);
     } finally {
       setAdding(false);
     }
-  }, [newWord, selectedImage, words, onWordsChange]);
+  }, [newWord, words, onWordsChange]);
 
   const handleDelete = useCallback(
     (index: number) => {
@@ -91,18 +80,6 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
     [words, onWordsChange],
   );
 
-  const handleExport = useCallback(() => {
-    const blob = new Blob([JSON.stringify(words, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "words.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [words]);
-
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter") handleAdd();
@@ -115,83 +92,73 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
       <button className="btn-modal-close" onClick={onClose} aria-label="关闭">
         <CloseIcon size={16} />
       </button>
-      <h3>
-        <SettingsIcon size={20} />
-        <span style={{ marginLeft: 6, verticalAlign: "middle" }}>单词库管理</span>
-      </h3>
 
-      <div className="add-form">
-        <input
-          type="text"
-          value={newWord}
-          onChange={(e) => setNewWord(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="输入英文单词，如 Elephant"
-          maxLength={30}
-        />
-        <select
-          value={selectedImage}
-          onChange={(e) => setSelectedImage(e.target.value)}
-        >
-          <option value="">选择已有图片</option>
-          {words.map((w) => (
-            <option key={w.image} value={w.image}>
-              {w.word.toLowerCase()}
-            </option>
+      <div className="manage-panel-header">
+        <h3>
+          <SettingsIcon size={20} />
+          <span style={{ marginLeft: 6, verticalAlign: "middle" }}>单词库管理</span>
+        </h3>
+
+        <div className="add-form">
+          <input
+            type="text"
+            value={newWord}
+            onChange={(e) => setNewWord(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="输入英文单词，如 Elephant"
+            maxLength={30}
+          />
+          <input
+            type="file"
+            ref={fileRef}
+            accept="image/*"
+            id="imageUpload"
+            style={{ display: "none" }}
+          />
+          <label htmlFor="imageUpload" className="btn-upload">
+            <UploadIcon size={16} />
+            <span style={{ marginLeft: 4 }}>上传图片</span>
+          </label>
+          <button
+            className="btn-add"
+            onClick={handleAdd}
+            disabled={adding}
+          >
+            <PlusIcon size={16} /> 添加
+          </button>
+        </div>
+      </div>
+
+      <div className="manage-panel-body">
+        <div className="word-list">
+          {words.map((w, i) => (
+            <div className="word-list-item" key={w.word + i}>
+              <img
+                className="thumb"
+                src={w.image}
+                alt={w.word}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+              <span className="word-text">{w.word.toLowerCase()}</span>
+              <button
+                className="btn-delete"
+                onClick={() => handleDelete(i)}
+              >
+                删除
+              </button>
+            </div>
           ))}
-        </select>
-        <input
-          type="file"
-          ref={fileRef}
-          accept="image/*"
-          id="imageUpload"
-          style={{ display: "none" }}
-        />
-        <label htmlFor="imageUpload" className="btn-upload">
-          <UploadIcon size={16} />
-          <span style={{ marginLeft: 4 }}>上传新图片</span>
-        </label>
-        <button
-          className="btn-add"
-          onClick={handleAdd}
-          disabled={adding}
-        >
-          <PlusIcon size={16} /> 添加
-        </button>
+        </div>
       </div>
 
-      <div className="word-list">
-        {words.map((w, i) => (
-          <div className="word-list-item" key={w.word + i}>
-            <img
-              className="thumb"
-              src={w.image}
-              alt={w.word}
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-            <span className="word-text">{w.word.toLowerCase()}</span>
-            <button
-              className="btn-delete"
-              onClick={() => handleDelete(i)}
-            >
-              删除
-            </button>
-          </div>
-        ))}
+      <div className="manage-panel-footer">
+        <p className="hint">
+          💡 添加的单词会自动保存到浏览器本地存储。上传的图片会转为 Base64
+          存储，无需服务器。
+        </p>
       </div>
-
-      <div className="manage-actions">
-        <button className="btn-export" onClick={handleExport}>
-          <ExportIcon size={16} />
-          <span style={{ marginLeft: 4 }}>导出单词库 (JSON)</span>
-        </button>
-      </div>
-      <p className="hint">
-        💡 添加的单词会自动保存到浏览器本地存储。上传的图片会转为 Base64
-        存储，无需服务器。
-      </p>
     </div>
   );
 }
