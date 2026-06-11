@@ -21,6 +21,7 @@ import {
   SwapIcon,
   SpeakerOnIcon,
   SpeakerOffIcon,
+  MenuIcon,
 } from "./icons";
 
 const Celebration = dynamic(
@@ -68,6 +69,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   const [showManage, setShowManage] = useState(false);
   const [mode, setMode] = useState<GameMode>("match");
   const [audioOn, setAudioOn] = useState(false);
+  const [showModeMenu, setShowModeMenu] = useState(false);
 
   const handleComplete = useCallback(() => {
     setShowCelebration(true);
@@ -111,6 +113,9 @@ export function GameBoard({ initialWords }: GameBoardProps) {
     <div className="top-actions">
       <button className="btn-audio" onClick={() => setAudioOn((prev) => !prev)} title={audioOn ? "关闭发音" : "开启发音"}>
         {audioOn ? <SpeakerOnIcon size={18} /> : <SpeakerOffIcon size={18} />}
+      </button>
+      <button className="btn-menu-toggle" onClick={() => setShowModeMenu(true)} title="切换模式">
+        <MenuIcon size={18} />
       </button>
       <button className="btn-manage" onClick={openManage}>
         <SettingsIcon size={16} />
@@ -311,6 +316,29 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       {showCelebration ? (
         <Celebration errorCount={matchState.errorCount} correctCount={4} onPlayAgain={handlePlayAgain} />
       ) : null}
+
+      {/* 移动端模式菜单 */}
+      <div className={`mode-menu-overlay${showModeMenu ? " show" : ""}`} onClick={() => setShowModeMenu(false)}>
+        <div className="mode-menu-box" onClick={(e) => e.stopPropagation()}>
+          {MODES.map((m) => {
+            const Icon = m.Icon;
+            return (
+              <button
+                key={m.key}
+                className={`mode-tab${mode === m.key ? " active" : ""}`}
+                onClick={() => {
+                  setMode(m.key);
+                  setShowCelebration(false);
+                  setShowModeMenu(false);
+                }}
+              >
+                <Icon size={18} />
+                <span style={{ marginLeft: 5 }} className="tab-label">{m.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

@@ -959,54 +959,86 @@ body::before {
   .add-form input[type="text"] { width: 100%; }
 }
 
+/* ===== 移动端模式菜单按钮（桌面端隐藏） ===== */
+.btn-menu-toggle {
+  display: none;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--lavender);
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(8px);
+  color: var(--lavender);
+  border-radius: 50%;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  padding: 0;
+}
+.btn-menu-toggle:hover {
+  background: var(--lavender);
+  color: white;
+}
+
+.mode-menu-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(44,62,80,0.35);
+  backdrop-filter: blur(3px);
+  z-index: 85;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 56px;
+}
+.mode-menu-overlay.show { display: flex; }
+.mode-menu-box {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(44,62,80,0.16);
+  display: flex;
+  gap: 8px;
+  animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
 @media (max-width: 480px) {
   .container { padding: 8px 6px; }
   .header { padding: 0; }
-  .header h1 { font-size: 18px; }
+  .header h1 { font-size: 16px; }
 
   /* ---- 左右布局 ---- */
   .game-area {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-  }
-
-  /* ---- 左右布局：左列 + 连接器 + 右列 ---- */
-  .game-area {
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
+    gap: 8px;
   }
 
   .game-area > .card-row {
     flex-direction: column;
     flex-wrap: nowrap;
-    gap: 6px;
+    gap: 12px;
     flex-shrink: 0;
   }
 
-  /* 提示卡片在看词选图/看图选词中单独一排 */
-  .prompt-card {
-    display: contents;
-  }
+  .prompt-card { display: contents; }
 
-  /* 纵向虚线连接器 */
   .card-connector {
-    width: 10px;
+    width: 14px;
     height: auto;
     flex-shrink: 0;
     align-self: stretch;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     justify-content: center;
   }
   .card-connector::before {
     left: 50% !important;
     right: auto !important;
-    top: 4% !important;
-    bottom: 4% !important;
+    top: 6% !important;
+    bottom: 6% !important;
     width: 2px !important;
     height: auto !important;
     background: repeating-linear-gradient(
@@ -1014,36 +1046,37 @@ body::before {
       var(--lavender) 0px,
       var(--lavender) 5px,
       transparent 5px,
-      transparent 12px
+      transparent 14px
     ) !important;
     transform: translateX(-50%) !important;
     border-radius: 1px !important;
+    opacity: 0.4 !important;
   }
-  .connector-dot { width: 6px; height: 6px; }
+  .connector-dot { width: 7px; height: 7px; }
 
   :root {
-    --word-w: 90px;
-    --word-h: 54px;
-    --image-w: 90px;
-    --image-h: 90px;
+    --word-w: 120px;
+    --word-h: 74px;
+    --image-w: 120px;
+    --image-h: 120px;
   }
-  .word-card { font-size: 20px; }
+  .word-card { font-size: 26px; }
 
-  /* 提示卡片保持原宽 */
-  .prompt-card .word-card { width: 100px; font-size: 22px; }
-  .prompt-card .image-card { width: 100px; height: 100px; }
+  .prompt-card .word-card { width: 120px; font-size: 26px; }
+  .prompt-card .image-card { width: 120px; height: 120px; }
 
-  .mode-tabs { gap: 4px; padding: 0 0 8px; }
-  .mode-tab { padding: 5px 8px; font-size: 11px; }
-  .mode-tab .tab-label { display: none; }
+  /* 桌面模式标签隐藏 → 右上角汉堡菜单 */
+  .mode-tabs { display: none; }
+  .btn-menu-toggle { display: flex; }
+
+  /* 隐藏管理按钮 */
+  .btn-manage { display: none; }
 
   .top-actions { top: 6px; right: 6px; gap: 4px; }
-  .btn-manage { padding: 6px 10px; font-size: 11px; }
-  .btn-manage span { display: none; }
-  .btn-audio { width: 30px; height: 30px; }
+  .btn-audio { width: 32px; height: 32px; }
 
   .status-bar { flex-direction: column; gap: 6px; align-items: stretch; }
-  .btn-play-again { width: 100%; justify-content: center; font-size: 14px; }
+  .btn-play-again { width: 100%; justify-content: center; font-size: 14px; padding: 12px 20px; }
 
   .manage-panel { padding: 0; border-radius: 20px 20px 0 0; max-width: 100%; max-height: 90dvh; }
   .manage-panel-header { padding: 18px 16px 0; }
@@ -1054,22 +1087,23 @@ body::before {
 
 @media (max-width: 380px) {
   .container { padding: 6px 4px; }
-  .header h1 { font-size: 16px; }
+  .header h1 { font-size: 15px; }
+  .game-area { gap: 5px; }
+  .game-area > .card-row { gap: 9px; }
   :root {
-    --word-w: 76px;
-    --word-h: 48px;
-    --image-w: 76px;
-    --image-h: 76px;
+    --word-w: 100px;
+    --word-h: 62px;
+    --image-w: 100px;
+    --image-h: 100px;
   }
-  .word-card { font-size: 17px; }
-  .prompt-card .word-card { width: 86px; font-size: 19px; }
-  .prompt-card .image-card { width: 86px; height: 86px; }
-  .game-area > .card-row { gap: 4px; }
-  .card-connector { width: 6px; }
-  .card-connector::before { width: 1.5px; }
-  .mode-tab { padding: 4px 6px; font-size: 10px; }
+  .word-card { font-size: 22px; }
+  .prompt-card .word-card { width: 100px; font-size: 22px; }
+  .prompt-card .image-card { width: 100px; height: 100px; }
+  .card-connector { width: 10px; gap: 8px; }
+  .card-connector::before { width: 1.5px !important; }
+  .connector-dot { width: 6px; height: 6px; }
   .top-actions { top: 4px; right: 4px; gap: 3px; }
-  .btn-manage { padding: 5px 8px; }
   .btn-audio { width: 28px; height: 28px; }
+  .btn-menu-toggle { width: 28px; height: 28px; }
   .btn-play-again { font-size: 13px; padding: 10px 20px; }
 }

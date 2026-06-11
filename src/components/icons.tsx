@@ -195,6 +195,17 @@ export function SpeakerOffIcon({ size = 20 }: IconProps) {
   );
 }
 
+// ──── 汉堡菜单（移动端）────
+export function MenuIcon({ size = 20 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M5 8 L19 8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M5 12 L19 12" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M5 16 L19 16" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // ──── 星星（庆祝）────
 export function StarIcon({ size = 72 }: IconProps) {
   return (
