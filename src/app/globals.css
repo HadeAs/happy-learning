@@ -227,7 +227,7 @@ body::before {
 /* ===== 单词卡片 ===== */
 .word-card {
   background: white;
-  border: 3.5px solid var(--coral);
+  border: 3.5px solid #E8E8E8;
   width: var(--word-w);
   height: var(--word-h);
   display: flex;
