@@ -226,32 +226,34 @@ export function GameBoard({ initialWords }: GameBoardProps) {
 
       {/* ---- 模式 B：看词选图 ---- */}
       {mode === "image-pick" && (
-        <div className="game-area">
-          <div className="card-row">
-            <div className="prompt-card">
-              <div className="card word-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)" }}>
-                {pickState.correct.word.toLowerCase()}
+        <>
+          <div className="game-area">
+            <div className="card-row">
+              <div className="prompt-card">
+                <div className="card word-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)" }}>
+                  {pickState.correct.word.toLowerCase()}
+                </div>
               </div>
             </div>
-          </div>
-          <CardConnector />
-          <div className="card-row">
-            {pickState.order.map((candIdx, displayPos) => {
-              const w = pickState.candidates[candIdx];
-              const isCorrectPick = pickState.justCorrect && w.word === pickState.correct.word;
-              const isWrongPick = pickState.wrong === displayPos;
-              return (
-                <ImageCard
-                  key={displayPos}
-                  image={w.image}
-                  word={w.word}
-                  slot={displayPos}
-                  isMatched={isCorrectPick}
-                  isWrong={isWrongPick}
-                  onClick={rawPickSelect}
-                />
-              );
-            })}
+            <CardConnector />
+            <div className="card-row">
+              {pickState.order.map((candIdx, displayPos) => {
+                const w = pickState.candidates[candIdx];
+                const isCorrectPick = pickState.justCorrect && w.word === pickState.correct.word;
+                const isWrongPick = pickState.wrong === displayPos;
+                return (
+                  <ImageCard
+                    key={displayPos}
+                    image={w.image}
+                    word={w.word}
+                    slot={displayPos}
+                    isMatched={isCorrectPick}
+                    isWrong={isWrongPick}
+                    onClick={rawPickSelect}
+                  />
+                );
+              })}
+            </div>
           </div>
           <div className="status-bar">
             <span>
@@ -261,38 +263,40 @@ export function GameBoard({ initialWords }: GameBoardProps) {
               <SwapIcon size={18} /> 换一个
             </button>
           </div>
-        </div>
+        </>
       )}
 
       {/* ---- 模式 C：看图选词 ---- */}
       {mode === "word-pick" && (
-        <div className="game-area">
-          <div className="card-row">
-            <div className="prompt-card">
-              <div className="card image-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)", width: 160, height: 160 }}>
-                <img src={pickState.correct.image} alt={pickState.correct.word} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+        <>
+          <div className="game-area">
+            <div className="card-row">
+              <div className="prompt-card">
+                <div className="card image-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)", width: 160, height: 160 }}>
+                  <img src={pickState.correct.image} alt={pickState.correct.word} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+                </div>
               </div>
             </div>
-          </div>
-          <CardConnector />
-          <div className="card-row">
-            {pickState.order.map((candIdx, displayPos) => {
-              const w = pickState.candidates[candIdx];
-              const isCorrectPick = pickState.justCorrect && w.word === pickState.correct.word;
-              const isWrongPick = pickState.wrong === displayPos;
-              return (
-                <WordCard
-                  key={displayPos}
-                  word={w.word}
-                  slot={displayPos}
-                  isSelected={false}
-                  isMatched={isCorrectPick}
-                  isWrong={isWrongPick}
-                  audioOn={audioOn}
-                  onClick={rawPickSelect}
-                />
-              );
-            })}
+            <CardConnector />
+            <div className="card-row">
+              {pickState.order.map((candIdx, displayPos) => {
+                const w = pickState.candidates[candIdx];
+                const isCorrectPick = pickState.justCorrect && w.word === pickState.correct.word;
+                const isWrongPick = pickState.wrong === displayPos;
+                return (
+                  <WordCard
+                    key={displayPos}
+                    word={w.word}
+                    slot={displayPos}
+                    isSelected={false}
+                    isMatched={isCorrectPick}
+                    isWrong={isWrongPick}
+                    audioOn={audioOn}
+                    onClick={rawPickSelect}
+                  />
+                );
+              })}
+            </div>
           </div>
           <div className="status-bar">
             <span>
@@ -302,7 +306,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
               <SwapIcon size={18} /> 换一个
             </button>
           </div>
-        </div>
+        </>
       )}
 
       {showManage ? (

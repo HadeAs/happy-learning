@@ -1057,11 +1057,11 @@ body::before {
 
   :root {
     --word-w: 120px;
-    --word-h: 74px;
+    --word-h: 120px;
     --image-w: 120px;
     --image-h: 120px;
   }
-  .word-card { font-size: 26px; }
+  .word-card { font-size: 26px; height: var(--word-h); }
 
   .prompt-card .word-card { width: 120px; font-size: 26px; }
   .prompt-card .image-card { width: 120px; height: 120px; }
@@ -1073,11 +1073,12 @@ body::before {
   /* 隐藏管理按钮 */
   .btn-manage { display: none; }
 
-  .top-actions { top: 6px; right: 6px; gap: 4px; }
-  .btn-audio { width: 32px; height: 32px; }
+  .top-actions { top: 8px; right: 8px; gap: 10px; }
+  .btn-audio { width: 34px; height: 34px; }
+  .btn-menu-toggle { width: 34px; height: 34px; }
 
-  .status-bar { flex-direction: column; gap: 6px; align-items: stretch; }
-  .btn-play-again { width: 100%; justify-content: center; font-size: 14px; padding: 12px 20px; }
+  .status-bar { flex-direction: row; justify-content: space-between; gap: 10px; align-items: center; width: 100%; padding: 8px 0 0; }
+  .btn-play-again { font-size: 14px; padding: 10px 18px; }
 
   .manage-panel { padding: 0; border-radius: 20px 20px 0 0; max-width: 100%; max-height: 90dvh; }
   .manage-panel-header { padding: 18px 16px 0; }
@@ -1093,18 +1094,19 @@ body::before {
   .game-area > .card-row { gap: 9px; }
   :root {
     --word-w: 100px;
-    --word-h: 62px;
+    --word-h: 100px;
     --image-w: 100px;
     --image-h: 100px;
   }
-  .word-card { font-size: 22px; }
+  .word-card { font-size: 22px; height: var(--word-h); }
   .prompt-card .word-card { width: 100px; font-size: 22px; }
   .prompt-card .image-card { width: 100px; height: 100px; }
   .card-connector { width: 10px; gap: 8px; }
   .card-connector::before { width: 1.5px !important; }
   .connector-dot { width: 6px; height: 6px; }
-  .top-actions { top: 4px; right: 4px; gap: 3px; }
-  .btn-audio { width: 28px; height: 28px; }
-  .btn-menu-toggle { width: 28px; height: 28px; }
-  .btn-play-again { font-size: 13px; padding: 10px 20px; }
+  .top-actions { top: 6px; right: 6px; gap: 8px; }
+  .btn-audio { width: 30px; height: 30px; }
+  .btn-menu-toggle { width: 30px; height: 30px; }
+  .btn-play-again { font-size: 13px; padding: 10px 18px; }
+  .status-bar { padding: 6px 0 0; }
 }
