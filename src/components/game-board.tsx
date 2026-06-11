@@ -120,7 +120,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       <div className="container">
         {manageBtn}
         <div className="header">
-          <h1><BalloonIcon size={28} /> 幼儿英语单词匹配游戏</h1>
+          <h1><BalloonIcon size={28} /> 快乐学英语</h1>
         </div>
         <div className="game-area" style={{ justifyContent: "center", alignItems: "center" }}>
           <p style={{ color: "var(--slate)", fontSize: 18, fontWeight: 600 }}>加载中...</p>
@@ -134,7 +134,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       {manageBtn}
 
       <div className="header">
-        <h1><BalloonIcon size={30} /> 幼儿英语单词匹配游戏</h1>
+        <h1><BalloonIcon size={30} /> 快乐学英语</h1>
       </div>
 
       <div className="mode-tabs">

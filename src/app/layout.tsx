@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "🎈 幼儿英语单词匹配游戏",
-  description: "幼儿英语单词与图片匹配游戏，在玩乐中学习英语",
+  title: "快乐学英语",
+  description: "快乐学英语，在玩耍中认识单词",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
