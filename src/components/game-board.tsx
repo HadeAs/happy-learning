@@ -73,21 +73,33 @@ export function GameBoard({ initialWords }: GameBoardProps) {
 
   // ---- 图片加载追踪 ----
   const [imagesPending, setImagesPending] = useState(0);
+  const [showLoading, setShowLoading] = useState(false);
   const [roundKey, setRoundKey] = useState(0);
-  const imageCountRef = useRef(0);
+  const pendingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const advanceRound = useCallback(() => {
     setRoundKey((k) => k + 1);
-    // 配对模式：4 张图片；看词选图：4 张图片；看图选词：1 张提示图
     const count = mode === "word-pick" ? 1 : 4;
     setImagesPending(count);
+    // 延迟 200ms 显示遮罩（快速加载时不闪烁）
+    if (pendingTimer.current) clearTimeout(pendingTimer.current);
+    pendingTimer.current = setTimeout(() => {
+      setShowLoading(true);
+    }, 200);
   }, [mode]);
 
-  // 每轮 / 每次模式切换重置加载计数
+  // 首轮 + 模式切换时重置加载计数
   useEffect(() => { advanceRound(); }, [advanceRound]);
 
   const onImageDone = useCallback(() => {
-    setImagesPending((p) => Math.max(0, p - 1));
+    setImagesPending((p) => {
+      const next = Math.max(0, p - 1);
+      if (next === 0) {
+        if (pendingTimer.current) clearTimeout(pendingTimer.current);
+        setShowLoading(false);
+      }
+      return next;
+    });
   }, []);
 
   // ---- 游戏状态 ----
@@ -97,15 +109,15 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   const { state: matchState, clickImage, newGame: newMatch, selectWord: rawSelectWord } = useGameState(words, handleComplete);
   const { state: pickState, select: rawPickSelect, newGame: newPick } = usePickGame(words);
 
-  // Pick 模式：答对自动进入下一轮时重置加载
-  const pickRoundRef = useRef(0);
+  // Pick 模式：justCorrect 从 true→false 意味着 NEXT_ROUND 已触发，新图片开始渲染
+  const prevJustCorrect = useRef(pickState.justCorrect);
   useEffect(() => {
-    if (pickState.correctCount > pickRoundRef.current) {
-      pickRoundRef.current = pickState.correctCount;
+    if (prevJustCorrect.current && !pickState.justCorrect) {
+      // 刚完成一轮 → 新一轮图片即将渲染
       advanceRound();
     }
-    if (pickState.correctCount === 0) pickRoundRef.current = 0;
-  }, [pickState.correctCount, advanceRound]);
+    prevJustCorrect.current = pickState.justCorrect;
+  }, [pickState.justCorrect, advanceRound]);
 
   // ---- 音频：仅在匹配正确时朗读 ----
 
@@ -163,7 +175,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   );
 
   // ---- 渲染 ----
-  const isLoading = imagesPending > 0;
+  const showOverlay = showLoading;
 
   if (words.length < MIN_WORDS) {
     return (
@@ -228,7 +240,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       {/* ---- 模式 A：单词配对 ---- */}
       {mode === "match" && (
         <div className="game-area" style={{ position: "relative" }}>
-          {isLoading && <div className="loading-overlay" />}
+          {showOverlay && <div className="loading-overlay" />}
           <div className="card-row">
             {matchState.wordOrder.map((slot) => {
               const w = matchState.roundWords[slot];
@@ -272,7 +284,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       {mode === "image-pick" && (
         <>
           <div className="game-area" style={{ position: "relative" }}>
-            {isLoading && <div className="loading-overlay" />}
+            {showOverlay && <div className="loading-overlay" />}
             <div className="card-row">
               <div className="prompt-card">
                 <div className="card word-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)" }}>
@@ -317,7 +329,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       {mode === "word-pick" && (
         <>
           <div className="game-area" style={{ position: "relative" }}>
-            {isLoading && <div className="loading-overlay" />}
+            {showOverlay && <div className="loading-overlay" />}
             <div className="card-row">
               <div className="prompt-card">
                 <div className="card image-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)", width: 160, height: 160 }}>

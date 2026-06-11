@@ -757,6 +757,11 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: loadingShow 0.15s ease;
+}
+@keyframes loadingShow {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 .loading-overlay::after {
   content: "";
