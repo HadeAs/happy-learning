@@ -14,10 +14,11 @@ const COUNT = 80;
 
 interface CelebrationProps {
   errorCount: number;
+  correctCount?: number;
   onPlayAgain: () => void;
 }
 
-export function Celebration({ errorCount, onPlayAgain }: CelebrationProps) {
+export function Celebration({ errorCount, correctCount, onPlayAgain }: CelebrationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -64,9 +65,11 @@ export function Celebration({ errorCount, onPlayAgain }: CelebrationProps) {
           <div className="emoji"><StarIcon size={72} /></div>
           <h2>太棒了！全部正确！</h2>
           <p className="errors">
-            {errorCount === 0
-              ? "✨ 零失误，完美！"
-              : `共错 ${errorCount} 次，继续加油哦～`}
+            {correctCount !== undefined
+              ? `✅ ${correctCount} 对 · ❌ ${errorCount} 次`
+              : errorCount === 0
+                ? "✨ 零失误，完美！"
+                : `共错 ${errorCount} 次，继续加油哦～`}
           </p>
           <button className="btn-play-again" onClick={onPlayAgain}>
             <RefreshIcon size={18} /> 再来一局

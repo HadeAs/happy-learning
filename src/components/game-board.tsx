@@ -192,9 +192,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
             })}
           </div>
           <div className="status-bar">
-            <span>
-              <CrossIcon size={18} /> <span className="error-count">{matchState.errorCount}</span> 次
-            </span>
+            <span />
             <button className="btn-play-again" onClick={handlePlayAgain}>
               <RefreshIcon size={18} /> 再来一局
             </button>
@@ -291,7 +289,7 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       ) : null}
 
       {showCelebration ? (
-        <Celebration errorCount={matchState.errorCount} onPlayAgain={handlePlayAgain} />
+        <Celebration errorCount={matchState.errorCount} correctCount={4} onPlayAgain={handlePlayAgain} />
       ) : null}
     </div>
   );
