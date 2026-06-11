@@ -48,7 +48,19 @@ interface GameBoardProps {
 }
 
 export function GameBoard({ initialWords }: GameBoardProps) {
-  const [words, setWords] = useState<Word[]>(initialWords);
+  const [words, setWords] = useState<Word[]>(() => {
+    // 优先从 localStorage 恢复用户编辑后的单词库
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("wordMatchGame_words");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length >= MIN_WORDS) return parsed;
+        } catch { /* ignore */ }
+      }
+    }
+    return initialWords;
+  });
   const [showCelebration, setShowCelebration] = useState(false);
   const [showManage, setShowManage] = useState(false);
   const [mode, setMode] = useState<GameMode>("match");

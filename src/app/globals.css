@@ -621,6 +621,67 @@ body::before {
   padding-right: 36px;
 }
 
+.manage-word-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--slate);
+  margin-left: 6px;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* ===== Toast ===== */
+.manage-toast {
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  z-index: 3;
+  animation: toastIn 0.3s ease;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.manage-toast.success {
+  background: var(--mint-light);
+  color: #2E7D32;
+  border: 1.5px solid var(--mint);
+}
+.manage-toast.error {
+  background: var(--berry-light);
+  color: #C62828;
+  border: 1.5px solid var(--berry);
+}
+@keyframes toastIn {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ===== 上传文件名 ===== */
+.upload-filename {
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  color: var(--slate);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+  align-self: center;
+  opacity: 0.7;
+}
+
+/* ===== 空列表 ===== */
+.word-list-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--slate);
+  font-size: 14px;
+  opacity: 0.6;
+}
+
 /* 可滚动单词列表区 */
 .manage-panel-body {
   flex: 1;

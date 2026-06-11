@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import type { Word } from "@/types";
 import { CloseIcon, UploadIcon, PlusIcon, SettingsIcon } from "./icons";
 
@@ -19,7 +19,7 @@ function readFileAsDataURL(file: File): Promise<string> {
     }
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(new Error("读取失败"));
+    reader.onerror = () => reject(new Error("图片读取失败"));
     reader.readAsDataURL(file);
   });
 }
@@ -27,28 +27,47 @@ function readFileAsDataURL(file: File): Promise<string> {
 export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps) {
   const [newWord, setNewWord] = useState("");
   const [adding, setAdding] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [toast, setToast] = useState<{ type: "success" | "error"; msg: string } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Auto-dismiss toast after 3s
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (f) {
+      if (!f.type.startsWith("image/")) {
+        setToast({ type: "error", msg: "请选择图片文件" });
+        return;
+      }
+      setFile(f);
+      setToast({ type: "success", msg: `已选取图片：${f.name}` });
+    }
+  }, []);
 
   const handleAdd = useCallback(async () => {
     const word = newWord.trim();
     if (!word) {
-      alert("请输入单词");
+      setToast({ type: "error", msg: "请输入单词" });
       return;
     }
     if (words.some((w) => w.word.toLowerCase() === word.toLowerCase())) {
-      alert("该单词已存在");
+      setToast({ type: "error", msg: `"${word}" 已存在` });
       return;
     }
-
-    if (!fileRef.current?.files?.length) {
-      alert("请上传图片");
+    if (!file) {
+      setToast({ type: "error", msg: "请先上传图片" });
       return;
     }
 
     setAdding(true);
     try {
-      const image = await readFileAsDataURL(fileRef.current.files[0]);
-
+      const image = await readFileAsDataURL(file);
       const formattedWord =
         word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
       const next = [...words, { word: formattedWord, image }];
@@ -56,18 +75,20 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
       onWordsChange(next);
 
       setNewWord("");
+      setFile(null);
       if (fileRef.current) fileRef.current.value = "";
+      setToast({ type: "success", msg: `"${formattedWord}" 添加成功！` });
     } catch (e) {
-      alert((e as Error).message);
+      setToast({ type: "error", msg: (e as Error).message });
     } finally {
       setAdding(false);
     }
-  }, [newWord, words, onWordsChange]);
+  }, [newWord, file, words, onWordsChange]);
 
   const handleDelete = useCallback(
     (index: number) => {
       if (words.length <= MIN_WORDS) {
-        alert(`至少需要保留 ${MIN_WORDS} 个单词才能游戏`);
+        setToast({ type: "error", msg: `至少需要保留 ${MIN_WORDS} 个单词才能游戏` });
         return;
       }
       const w = words[index];
@@ -76,6 +97,7 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
       const next = words.filter((_, i) => i !== index);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       onWordsChange(next);
+      setToast({ type: "success", msg: `已删除 "${w.word}"` });
     },
     [words, onWordsChange],
   );
@@ -93,10 +115,16 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
         <CloseIcon size={16} />
       </button>
 
+      {/* Toast */}
+      {toast ? (
+        <div className={`manage-toast${toast.type === "success" ? " success" : " error"}`}>{toast.msg}</div>
+      ) : null}
+
       <div className="manage-panel-header">
         <h3>
           <SettingsIcon size={20} />
           <span style={{ marginLeft: 6, verticalAlign: "middle" }}>单词库管理</span>
+          <span className="manage-word-count">（{words.length} 个单词）</span>
         </h3>
 
         <div className="add-form">
@@ -113,43 +141,49 @@ export function ManagePanel({ words, onWordsChange, onClose }: ManagePanelProps)
             ref={fileRef}
             accept="image/*"
             id="imageUpload"
+            onChange={handleFileChange}
             style={{ display: "none" }}
           />
           <label htmlFor="imageUpload" className="btn-upload">
             <UploadIcon size={16} />
-            <span style={{ marginLeft: 4 }}>上传图片</span>
+            <span style={{ marginLeft: 4 }}>{file ? "已选图片" : "上传图片"}</span>
           </label>
+          {file ? <span className="upload-filename">{file.name}</span> : null}
           <button
             className="btn-add"
             onClick={handleAdd}
             disabled={adding}
           >
-            <PlusIcon size={16} /> 添加
+            <PlusIcon size={16} /> {adding ? "添加中..." : "添加"}
           </button>
         </div>
       </div>
 
       <div className="manage-panel-body">
         <div className="word-list">
-          {words.map((w, i) => (
-            <div className="word-list-item" key={w.word + i}>
-              <img
-                className="thumb"
-                src={w.image}
-                alt={w.word}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
-                }}
-              />
-              <span className="word-text">{w.word.toLowerCase()}</span>
-              <button
-                className="btn-delete"
-                onClick={() => handleDelete(i)}
-              >
-                删除
-              </button>
-            </div>
-          ))}
+          {words.length === 0 ? (
+            <p className="word-list-empty">暂无单词，请先添加</p>
+          ) : (
+            words.map((w, i) => (
+              <div className="word-list-item" key={w.word + i}>
+                <img
+                  className="thumb"
+                  src={w.image}
+                  alt={w.word}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                />
+                <span className="word-text">{w.word.toLowerCase()}</span>
+                <button
+                  className="btn-delete"
+                  onClick={() => handleDelete(i)}
+                >
+                  删除
+                </button>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
