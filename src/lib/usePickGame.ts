@@ -34,7 +34,9 @@ type Action =
   | { type: "NEW_GAME"; words: Word[] };
 
 function pickRounds(words: Word[], count: number): Word[] {
-  const indices = shuffleArray(Array.from({ length: words.length }, (_, i) => i));
+  const indices = shuffleArray(
+    Array.from({ length: words.length }, (_, i) => i),
+  );
   return indices.slice(0, count).map((i) => words[i]);
 }
 
@@ -143,7 +145,7 @@ export function usePickGame(words: Word[]) {
     if (state.justCorrect) {
       timerRef.current = setTimeout(() => {
         dispatch({ type: "NEXT_ROUND" });
-      }, 1500);
+      }, 1000);
       return () => {
         if (timerRef.current) clearTimeout(timerRef.current);
       };
