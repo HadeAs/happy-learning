@@ -1,6 +1,5 @@
 "use client";
-import { useRef } from "react";
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 interface ImageCardProps {
   image: string;
@@ -9,6 +8,8 @@ interface ImageCardProps {
   isMatched: boolean;
   isWrong: boolean;
   onClick: (slot: number) => void;
+  onImageDone?: () => void;
+  roundKey?: number;
 }
 
 const THROTTLE_MS = 300;
@@ -20,9 +21,20 @@ export function ImageCard({
   isMatched,
   isWrong,
   onClick,
+  onImageDone,
+  roundKey = 0,
 }: ImageCardProps) {
   const [imgError, setImgError] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const lastClick = useRef(0);
+  const prevRound = useRef(roundKey);
+
+  // 新一轮开始时重置加载状态
+  if (prevRound.current !== roundKey) {
+    prevRound.current = roundKey;
+    setLoaded(false);
+    setImgError(false);
+  }
 
   const cls = [
     "card",
@@ -42,6 +54,21 @@ export function ImageCard({
     onClick(slot);
   };
 
+  const handleLoad = () => {
+    if (!loaded) {
+      setLoaded(true);
+      onImageDone?.();
+    }
+  };
+
+  const handleError = () => {
+    setImgError(true);
+    if (!loaded) {
+      setLoaded(true);
+      onImageDone?.();
+    }
+  };
+
   return (
     <div
       className={cls}
@@ -55,7 +82,8 @@ export function ImageCard({
           src={image}
           alt={word.toLowerCase()}
           loading="lazy"
-          onError={() => setImgError(true)}
+          onLoad={handleLoad}
+          onError={handleError}
         />
       )}
       {isMatched ? <span className="image-card-check">✓</span> : null}

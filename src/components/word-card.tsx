@@ -1,6 +1,5 @@
 "use client";
 import { useRef } from "react";
-import { speak } from "@/lib/speech";
 
 interface WordCardProps {
   word: string;
@@ -41,8 +40,6 @@ export function WordCard({
     const now = Date.now();
     if (now - lastClick.current < THROTTLE_MS) return;
     lastClick.current = now;
-
-    if (audioOn && !isSelected) speak(word);
     onClick(slot);
   };
 

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import type { Word, GameMode } from "@/types";
 import { useGameState } from "@/lib/useGameState";
@@ -71,36 +71,74 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   const [audioOn, setAudioOn] = useState(false);
   const [showModeMenu, setShowModeMenu] = useState(false);
 
+  // ---- 图片加载追踪 ----
+  const [imagesPending, setImagesPending] = useState(0);
+  const [roundKey, setRoundKey] = useState(0);
+  const imageCountRef = useRef(0);
+
+  const advanceRound = useCallback(() => {
+    setRoundKey((k) => k + 1);
+    // 配对模式：4 张图片；看词选图：4 张图片；看图选词：1 张提示图
+    const count = mode === "word-pick" ? 1 : 4;
+    setImagesPending(count);
+  }, [mode]);
+
+  // 每轮 / 每次模式切换重置加载计数
+  useEffect(() => { advanceRound(); }, [advanceRound]);
+
+  // Pick 模式：答对自动进入下一轮时重置加载
+  const pickRoundRef = useRef(0);
+  useEffect(() => {
+    if (pickState.correctCount > pickRoundRef.current) {
+      pickRoundRef.current = pickState.correctCount;
+      advanceRound();
+    }
+    if (pickState.correctCount === 0) pickRoundRef.current = 0;
+  }, [pickState.correctCount, advanceRound]);
+
+  const onImageDone = useCallback(() => {
+    setImagesPending((p) => Math.max(0, p - 1));
+  }, []);
+
+  // ---- 游戏状态 ----
   const handleComplete = useCallback(() => {
     setShowCelebration(true);
   }, []);
-  const { state: matchState, selectWord: rawSelectWord, clickImage, newGame: newMatch } = useGameState(words, handleComplete);
-
+  const { state: matchState, clickImage, newGame: newMatch, selectWord: rawSelectWord } = useGameState(words, handleComplete);
   const { state: pickState, select: rawPickSelect, newGame: newPick } = usePickGame(words);
 
-  // 看词选图/看图选词：答对时朗读
+  // ---- 音频：仅在匹配正确时朗读 ----
+
+  // 配对模式：监听 matchedSlots 增加
+  const prevMatchedRef = useRef(matchState.matchedSlots.size);
+  useEffect(() => {
+    if (!audioOn) { prevMatchedRef.current = matchState.matchedSlots.size; return; }
+    if (matchState.matchedSlots.size <= prevMatchedRef.current) {
+      prevMatchedRef.current = matchState.matchedSlots.size;
+      return;
+    }
+    // 新增了一个配对 → 朗读
+    const newMatched = [...matchState.matchedSlots].pop();
+    if (newMatched !== undefined) {
+      const w = matchState.roundWords[newMatched];
+      if (w) speak(w.word);
+    }
+    prevMatchedRef.current = matchState.matchedSlots.size;
+  }, [audioOn, matchState.matchedSlots, matchState.roundWords]);
+
+  // Pick 模式：答对时朗读
   useEffect(() => {
     if (!audioOn) return;
     if (!pickState.justCorrect) return;
     speak(pickState.correct.word);
   }, [audioOn, pickState.justCorrect, pickState.correct.word]);
 
-  // 看词选图：出新题时朗读（监听单词变化）
-  useEffect(() => {
-    if (!audioOn || mode !== "image-pick") return;
-    if (pickState.justCorrect) return; // 答对已读，不出声
-    speak(pickState.correct.word);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioOn, mode, pickState.correct.word]);
-
+  // ---- 操作回调 ----
   const handlePlayAgain = useCallback(() => {
     setShowCelebration(false);
-    if (mode === "match") {
-      newMatch();
-    } else {
-      newPick();
-    }
-  }, [mode, newMatch, newPick]);
+    if (mode === "match") newMatch(); else newPick();
+    advanceRound();
+  }, [mode, newMatch, newPick, advanceRound]);
 
   const handleWordsChange = useCallback((nextWords: Word[]) => {
     setWords(nextWords);
@@ -123,6 +161,9 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       </button>
     </div>
   );
+
+  // ---- 渲染 ----
+  const isLoading = imagesPending > 0;
 
   if (words.length < MIN_WORDS) {
     return (
@@ -186,7 +227,8 @@ export function GameBoard({ initialWords }: GameBoardProps) {
 
       {/* ---- 模式 A：单词配对 ---- */}
       {mode === "match" && (
-        <div className="game-area">
+        <div className="game-area" style={{ position: "relative" }}>
+          {isLoading && <div className="loading-overlay" />}
           <div className="card-row">
             {matchState.wordOrder.map((slot) => {
               const w = matchState.roundWords[slot];
@@ -217,6 +259,8 @@ export function GameBoard({ initialWords }: GameBoardProps) {
                   isMatched={matchState.matchedSlots.has(slot)}
                   isWrong={matchState.wrongImageSlot === slot}
                   onClick={clickImage}
+                  onImageDone={onImageDone}
+                  roundKey={roundKey}
                 />
               );
             })}
@@ -227,7 +271,8 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       {/* ---- 模式 B：看词选图 ---- */}
       {mode === "image-pick" && (
         <>
-          <div className="game-area">
+          <div className="game-area" style={{ position: "relative" }}>
+            {isLoading && <div className="loading-overlay" />}
             <div className="card-row">
               <div className="prompt-card">
                 <div className="card word-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)" }}>
@@ -250,6 +295,8 @@ export function GameBoard({ initialWords }: GameBoardProps) {
                     isMatched={isCorrectPick}
                     isWrong={isWrongPick}
                     onClick={rawPickSelect}
+                    onImageDone={onImageDone}
+                    roundKey={roundKey}
                   />
                 );
               })}
@@ -269,11 +316,17 @@ export function GameBoard({ initialWords }: GameBoardProps) {
       {/* ---- 模式 C：看图选词 ---- */}
       {mode === "word-pick" && (
         <>
-          <div className="game-area">
+          <div className="game-area" style={{ position: "relative" }}>
+            {isLoading && <div className="loading-overlay" />}
             <div className="card-row">
               <div className="prompt-card">
                 <div className="card image-card" style={{ pointerEvents: "none", background: "var(--coral-light)", transform: "scale(1.05)", width: 160, height: 160 }}>
-                  <img src={pickState.correct.image} alt={pickState.correct.word} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+                  <PromptImage
+                    src={pickState.correct.image}
+                    alt={pickState.correct.word}
+                    onDone={onImageDone}
+                    roundKey={roundKey}
+                  />
                 </div>
               </div>
             </div>
@@ -344,5 +397,40 @@ export function GameBoard({ initialWords }: GameBoardProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+/** 看图选词模式的提示图片：带加载回调 */
+function PromptImage({
+  src,
+  alt,
+  onDone,
+  roundKey,
+}: {
+  src: string;
+  alt: string;
+  onDone: () => void;
+  roundKey: number;
+}) {
+  const [done, setDone] = useState(false);
+  const prevRound = useRef(roundKey);
+
+  if (prevRound.current !== roundKey) {
+    prevRound.current = roundKey;
+    setDone(false);
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt.toLowerCase()}
+      style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+      onLoad={() => {
+        if (!done) { setDone(true); onDone(); }
+      }}
+      onError={() => {
+        if (!done) { setDone(true); onDone(); }
+      }}
+    />
   );
 }
