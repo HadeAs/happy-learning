@@ -86,16 +86,6 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   // 每轮 / 每次模式切换重置加载计数
   useEffect(() => { advanceRound(); }, [advanceRound]);
 
-  // Pick 模式：答对自动进入下一轮时重置加载
-  const pickRoundRef = useRef(0);
-  useEffect(() => {
-    if (pickState.correctCount > pickRoundRef.current) {
-      pickRoundRef.current = pickState.correctCount;
-      advanceRound();
-    }
-    if (pickState.correctCount === 0) pickRoundRef.current = 0;
-  }, [pickState.correctCount, advanceRound]);
-
   const onImageDone = useCallback(() => {
     setImagesPending((p) => Math.max(0, p - 1));
   }, []);
@@ -106,6 +96,16 @@ export function GameBoard({ initialWords }: GameBoardProps) {
   }, []);
   const { state: matchState, clickImage, newGame: newMatch, selectWord: rawSelectWord } = useGameState(words, handleComplete);
   const { state: pickState, select: rawPickSelect, newGame: newPick } = usePickGame(words);
+
+  // Pick 模式：答对自动进入下一轮时重置加载
+  const pickRoundRef = useRef(0);
+  useEffect(() => {
+    if (pickState.correctCount > pickRoundRef.current) {
+      pickRoundRef.current = pickState.correctCount;
+      advanceRound();
+    }
+    if (pickState.correctCount === 0) pickRoundRef.current = 0;
+  }, [pickState.correctCount, advanceRound]);
 
   // ---- 音频：仅在匹配正确时朗读 ----
 
