@@ -13,7 +13,6 @@ interface ImageCardProps {
 }
 
 const THROTTLE_MS = 300;
-const COLORS = 6;
 
 export function ImageCard({
   image, word, slot, isMatched, isWrong, onClick, onImageDone, roundKey,
@@ -31,7 +30,6 @@ export function ImageCard({
 
   const cls = [
     "card", "image-card", "entering",
-    `card-color-${slot % COLORS}`,
     isMatched && "matched",
     isWrong && "wrong",
   ].filter(Boolean).join(" ");

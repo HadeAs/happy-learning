@@ -12,7 +12,6 @@ interface WordCardProps {
 }
 
 const THROTTLE_MS = 300;
-const COLORS = 6;
 
 export function WordCard({
   word, slot, isSelected, isMatched, isWrong, audioOn, onClick,
@@ -21,7 +20,6 @@ export function WordCard({
 
   const cls = [
     "card", "word-card", "entering",
-    `card-color-${slot % COLORS}`,
     isSelected && "selected",
     isMatched && "matched",
     isWrong && "wrong",
