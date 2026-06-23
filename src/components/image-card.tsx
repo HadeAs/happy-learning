@@ -9,27 +9,20 @@ interface ImageCardProps {
   isWrong: boolean;
   onClick: (slot: number) => void;
   onImageDone?: () => void;
-  roundKey?: number;
+  roundKey: number;
 }
 
 const THROTTLE_MS = 300;
+const COLORS = 6;
 
 export function ImageCard({
-  image,
-  word,
-  slot,
-  isMatched,
-  isWrong,
-  onClick,
-  onImageDone,
-  roundKey = 0,
+  image, word, slot, isMatched, isWrong, onClick, onImageDone, roundKey,
 }: ImageCardProps) {
   const [imgError, setImgError] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const lastClick = useRef(0);
   const prevRound = useRef(roundKey);
 
-  // 新一轮开始时重置加载状态
   if (prevRound.current !== roundKey) {
     prevRound.current = roundKey;
     setLoaded(false);
@@ -37,54 +30,35 @@ export function ImageCard({
   }
 
   const cls = [
-    "card",
-    "image-card",
-    "entering",
+    "card", "image-card", "entering",
+    `card-color-${slot % COLORS}`,
     isMatched && "matched",
     isWrong && "wrong",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  ].filter(Boolean).join(" ");
 
   const handleClick = () => {
     if (isMatched) return;
     const now = Date.now();
     if (now - lastClick.current < THROTTLE_MS) return;
     lastClick.current = now;
+    if (!isMatched && navigator.vibrate) navigator.vibrate(10);
     onClick(slot);
   };
 
   const handleLoad = () => {
-    if (!loaded) {
-      setLoaded(true);
-      onImageDone?.();
-    }
+    if (!loaded) { setLoaded(true); onImageDone?.(); }
   };
-
   const handleError = () => {
-    setImgError(true);
-    if (!loaded) {
-      setLoaded(true);
-      onImageDone?.();
-    }
+    if (!loaded) { setLoaded(true); setImgError(true); onImageDone?.(); }
   };
 
   return (
-    <div
-      className={cls}
-      style={{ animationDelay: `${50 + slot * 90}ms` }}
-      onClick={handleClick}
-    >
+    <div className={cls} style={{ animationDelay: `${50 + slot * 100}ms` }} onClick={handleClick}>
       {imgError ? (
         <span className="placeholder">{word.toLowerCase()}</span>
       ) : (
-        <img
-          src={image}
-          alt={word.toLowerCase()}
-          loading="lazy"
-          onLoad={handleLoad}
-          onError={handleError}
-        />
+        <img src={image} alt={word.toLowerCase()} loading="lazy"
+          onLoad={handleLoad} onError={handleError} />
       )}
       {isMatched ? <span className="image-card-check">✓</span> : null}
     </div>

@@ -12,43 +12,32 @@ interface WordCardProps {
 }
 
 const THROTTLE_MS = 300;
+const COLORS = 6;
 
 export function WordCard({
-  word,
-  slot,
-  isSelected,
-  isMatched,
-  isWrong,
-  audioOn,
-  onClick,
+  word, slot, isSelected, isMatched, isWrong, audioOn, onClick,
 }: WordCardProps) {
   const lastClick = useRef(0);
 
   const cls = [
-    "card",
-    "word-card",
-    "entering",
+    "card", "word-card", "entering",
+    `card-color-${slot % COLORS}`,
     isSelected && "selected",
     isMatched && "matched",
     isWrong && "wrong",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  ].filter(Boolean).join(" ");
 
   const handleClick = () => {
     if (isMatched) return;
     const now = Date.now();
     if (now - lastClick.current < THROTTLE_MS) return;
     lastClick.current = now;
+    if (audioOn && !isSelected && navigator.vibrate) navigator.vibrate(10);
     onClick(slot);
   };
 
   return (
-    <div
-      className={cls}
-      style={{ animationDelay: `${50 + slot * 90}ms` }}
-      onClick={handleClick}
-    >
+    <div className={cls} style={{ animationDelay: `${50 + slot * 100}ms` }} onClick={handleClick}>
       {word.toLowerCase()}
       {isMatched ? <span className="match-check">✓</span> : null}
     </div>
